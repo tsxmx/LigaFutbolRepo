@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EquipoRepository implements Repository<Equipo> {
-    #a
+
     private Connection getConnection() throws SQLException
     {
         return DBC.getConnection();
@@ -22,7 +22,7 @@ public class EquipoRepository implements Repository<Equipo> {
      * @return
      */
     @Override
-    public List<Equipo> findAllBasic() {
+    public List<Equipo> findAll() {
         return List.of();
     }
 
@@ -31,7 +31,7 @@ public class EquipoRepository implements Repository<Equipo> {
      * @return
      */
     @Override
-    public Equipo findBasicById(int id) {
+    public Equipo findById(int id) {
         return null;
     }
 

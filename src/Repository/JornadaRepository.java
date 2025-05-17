@@ -19,7 +19,7 @@ public class JornadaRepository implements Repository<Jornada>{
      * @return
      */
     @Override
-    public List<Jornada> findAllBasic() {
+    public List<Jornada> findAll() {
         return List.of();
     }
 
@@ -28,7 +28,7 @@ public class JornadaRepository implements Repository<Jornada>{
      * @return
      */
     @Override
-    public Jornada findBasicById(int id) {
+    public Jornada findById(int id) {
         return null;
     }
 

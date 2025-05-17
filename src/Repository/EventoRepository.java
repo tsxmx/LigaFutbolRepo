@@ -19,7 +19,7 @@ public class EventoRepository implements Repository<Evento>{
      * @return
      */
     @Override
-    public List<Evento> findAllBasic() {
+    public List<Evento> findAll() {
         return List.of();
     }
 
@@ -28,7 +28,7 @@ public class EventoRepository implements Repository<Evento>{
      * @return
      */
     @Override
-    public Evento findBasicById(int id) {
+    public Evento findById(int id) {
         return null;
     }
 

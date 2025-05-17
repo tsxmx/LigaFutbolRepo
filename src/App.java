@@ -1,4 +1,6 @@
 import Entity.Liga;
+import Repository.EquipoRepository;
+import Repository.JornadaRepository;
 import Repository.LigaRepository;
 
 import java.util.ArrayList;
@@ -9,20 +11,17 @@ import java.util.List;
 public class App {
     public static void main(String[] args) {
 
-        /*
 
-        LigaRepository ligaRepo = new LigaRepository();
-        List<Liga> ligas = new ArrayList<>();
 
-        ligas.addAll(ligaRepo.findAll());
+        LigaRepository ligaRepo = new LigaRepository(new EquipoRepository(), new JornadaRepository());
+        Liga ligas = null;
 
-        for(Liga l : ligas)
-        {
-            System.out.println(l);
-        }
+        ligas = ligaRepo.findById(1);
 
-         */
-
+        //for(Liga l : ligas)
+        //{
+            System.out.println(ligas.getNombre());
+        //}
 
     }
 }

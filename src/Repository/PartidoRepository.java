@@ -18,7 +18,7 @@ public class PartidoRepository implements Repository<Partido> {
      * @return
      */
     @Override
-    public List<Partido> findAllBasic() {
+    public List<Partido> findAll() {
         return List.of();
     }
 
@@ -27,7 +27,7 @@ public class PartidoRepository implements Repository<Partido> {
      * @return
      */
     @Override
-    public Partido findBasicById(int id) {
+    public Partido findById(int id) {
         return null;
     }
 

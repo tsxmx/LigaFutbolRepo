@@ -2,9 +2,7 @@ package Entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Liga {
 
@@ -13,8 +11,10 @@ public class Liga {
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
 
-    private List<Equipo> equipos;
-    private List<Jornada> jornadas;
+    private Set<Equipo> equiposSorted = new TreeSet<>();
+    private Map<Integer, Equipo> equiposfind = new HashMap();
+
+    private List<Jornada> jornadas = new ArrayList<>();
 
     // Constructor de copia
 
@@ -25,8 +25,6 @@ public class Liga {
         this.nombre = nombre;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
-        this.equipos = new ArrayList<>();
-        this.jornadas = new ArrayList<>();
     }
 
     // Getters y Setters
@@ -63,14 +61,6 @@ public class Liga {
 
     public void setFechaFin(LocalDate fechaFin) {
         this.fechaFin = fechaFin;
-    }
-
-    public List<Equipo> getEquipos() {
-        return equipos;
-    }
-
-    public void setEquipos(List<Equipo> equipos) {
-        this.equipos = equipos;
     }
 
     public List<Jornada> getJornadas() {

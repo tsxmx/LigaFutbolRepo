@@ -1,4 +1,4 @@
-package Repository
+package Repository;
 import Entity.TipoEvento;
 import Util.DBC;
 
@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class TipoEventoRepository implements Repository<TipoEvento> {
-
 
     private Connection getConnection() throws SQLException
     {
@@ -18,7 +17,7 @@ public class TipoEventoRepository implements Repository<TipoEvento> {
      * @return
      */
     @Override
-    public List<TipoEvento> findAllBasic() {
+    public List<TipoEvento> findAll() {
         return List.of();
     }
 
@@ -27,7 +26,7 @@ public class TipoEventoRepository implements Repository<TipoEvento> {
      * @return
      */
     @Override
-    public TipoEvento findBasicById(int id) {
+    public TipoEvento findById(int id) {
         return null;
     }
 

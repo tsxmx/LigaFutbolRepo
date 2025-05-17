@@ -19,7 +19,7 @@ public class JugadorRepository implements Repository<Jugador> {
      * @return
      */
     @Override
-    public List<Jugador> findAllBasic() {
+    public List<Jugador> findAll() {
         return List.of();
     }
 
@@ -28,7 +28,7 @@ public class JugadorRepository implements Repository<Jugador> {
      * @return
      */
     @Override
-    public Jugador findBasicById(int id) {
+    public Jugador findById(int id) {
         return null;
     }
 
