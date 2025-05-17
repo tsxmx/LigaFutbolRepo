@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EquipoRepository implements Repository<Equipo> {
-
+    #a
     private Connection getConnection() throws SQLException
     {
         return DBC.getConnection();

@@ -1,5 +1,4 @@
-package Repository;
-
+package Repository
 import Entity.TipoEvento;
 import Util.DBC;
 
