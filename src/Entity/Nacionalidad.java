@@ -1,0 +1,33 @@
+package Entity;
+
+public enum Nacionalidad {
+    ESPAÑA,
+    ARGENTINA,
+    BRASIL,
+    FRANCIA,
+    PORTUGAL,
+    URUGUAY,
+    COLOMBIA,
+    ALEMANIA,
+    ITALIA,
+    PAÍSES_BAJOS,
+    BÉLGICA,
+    MARRUECOS,
+    NIGERIA,
+    SENEGAL,
+    MÉXICO,
+    CHILE,
+    ECUADOR,
+    VENEZUELA,
+    CROACIA,
+    POLONIA,
+    INGLATERRA,
+    CAMERÚN,
+    COSTA_DE_MARFIL,
+    ARGELIA,
+    GABÓN,
+    GHANA,
+    JAPÓN,
+    COREA_DEL_SUR,
+    ESLOVENIA
+}
