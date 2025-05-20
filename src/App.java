@@ -1,6 +1,8 @@
+import Entity.Equipo;
 import Entity.Liga;
 import Repository.EquipoRepository;
 import Repository.JornadaRepository;
+import Repository.JugadorRepository;
 import Repository.LigaRepository;
 
 import java.util.ArrayList;
@@ -13,15 +15,17 @@ public class App {
 
 
 
-        LigaRepository ligaRepo = new LigaRepository(new EquipoRepository(), new JornadaRepository());
-        Liga ligas = null;
+        LigaRepository ligaRepo = new LigaRepository();
+        List<Equipo> equipos = new ArrayList<>();
 
-        ligas = ligaRepo.findById(1);
+        equipos.addAll(ligaRepo.findEquiposByLigaId(1));
 
-        //for(Liga l : ligas)
-        //{
-            System.out.println(ligas.getNombre());
-        //}
+
+
+        for(Equipo e : equipos)
+        {
+            System.out.println(e.getNombre());
+        }
 
     }
 }

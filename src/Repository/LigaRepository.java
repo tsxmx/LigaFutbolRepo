@@ -1,27 +1,21 @@
 package Repository;
 
+import Entity.Color;
 import Entity.Equipo;
 import Entity.Jornada;
 import Entity.Liga;
 import Helper.Converter;
-import Service.LigaService;
 import Util.DBC;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class LigaRepository implements Repository<Liga>{
 
-    private final EquipoRepository ER;
-    private final JornadaRepository JR;
-
-    public LigaRepository(EquipoRepository equipoRepo, JornadaRepository jornadaRepo) {
-        this.ER = equipoRepo;
-        this.JR = jornadaRepo;
-    }
+    private  EquipoRepository ER;
+    private  JornadaRepository JR;
 
     private Connection getConnection() throws SQLException
     {
@@ -42,8 +36,8 @@ public class LigaRepository implements Repository<Liga>{
 
             Connection con = getConnection();
 
-            String query = "SELECT id, nombre, DATE(fecha_inicio) as fecha_inicio, DATE(fecha_fin) as fecha_fin " +
-                         "FROM liga";
+            String query =  "select id, nombre, DATE(fecha_inicio) fecha_inicio, DATE(fecha_fin) as fecha_fin " +
+                            "from liga";
 
 
             PreparedStatement pstmt = con.prepareStatement(query);
@@ -58,6 +52,33 @@ public class LigaRepository implements Repository<Liga>{
 
                 Liga liga = new Liga(idLiga, nombreLiga, fechaInicio, fechaFin);
                 ligasReturn.add(liga);
+            }
+
+            for(Liga liga : ligasReturn)
+            {
+                query =  "select l.nombre, e.idEquipo, e.nombre as nombreEquipo, e.estadio, e.color_primario, e.color_secundario, e.cuota, DATE(e.fecha_creacion) as fecha_creacion " +
+                        "from liga l " +
+                        "join equipo e " +
+                        "on l.id = e.liga_id " +
+                        "where l.nombre like ?";
+
+                pstmt = con.prepareStatement(query);
+                pstmt.setString(1, liga.getNombre());
+                rs = pstmt.executeQuery();
+
+                while(rs.next())
+                {
+                    LocalDate fCrea = Converter.datetimteToLocalDate(rs.getString("fecha_creacion"));
+
+                    liga.addEquipo(new Equipo(rs.getInt("idEquipo"),
+                            rs.getString("nombreEquipo"),
+                            rs.getString("estadio"),
+                            Color.valueOf(rs.getString("color_primario")),
+                            Color.valueOf(rs.getString("color_secundario")),
+                            rs.getDouble("cuota"),
+                            fCrea,
+                            liga));
+                }
             }
         }
         catch (SQLException e) {
@@ -81,8 +102,8 @@ public class LigaRepository implements Repository<Liga>{
             Connection con = getConnection();
 
             String query =    "SELECT id, nombre, DATE(fecha_inicio) as fecha_inicio, DATE(fecha_fin) as fecha_fin " +
-                            "FROM liga " +
-                            "WHERE ID = ?";
+                              "FROM liga " +
+                              "WHERE ID = ?";
 
             PreparedStatement pstmt = con.prepareStatement(query);
             pstmt.setInt(1, id);
@@ -106,16 +127,51 @@ public class LigaRepository implements Repository<Liga>{
 
     }
 
-    public Liga findByIdWithTeams(int idLiga)
-    {
-        Liga liga = findById(idLiga);
+    public List<Equipo> findEquiposByLigaId(int idLiga){
+        List<Equipo> equiposReturn = new ArrayList<>();
 
-        if(liga != null)
-        {
-            // List<Equipo> equipos = ER.findByLigaId(int id); #TODO
-            // liga.setEquipos(equipos);
+        try{
+            Connection con = getConnection();
+
+            String query = "SELECT e.idEquipo, " +
+                                    "e.nombre, " +
+                                    "e.estadio, " +
+                                    "e.color_primario, " +
+                                    "e.color_secundario, " +
+                                    "e.cuota, " +
+                                    "DATE(e.fecha_creacion) as fecha_creacion, " +
+                                    "l.id as ligaID, " +
+                                    "l.nombre as ligaNombre " +
+                            "FROM equipo e " +
+                            "JOIN liga l " +
+                            "on e.Liga_ID = l.id " +
+                            "WHERE l.id = ?";
+
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, idLiga);
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next())
+            {
+                int idEquipo = rs.getInt("idEquipo");
+                String nombre = rs.getString("nombre");
+                String estadio = rs.getString("estadio");
+                Color colorP = Color.valueOf(rs.getString("color_primario"));
+                Color colorS = Color.valueOf(rs.getString("color_secundario"));
+                double cuota = rs.getDouble("cuota");
+                LocalDate fechaCreacion = Converter.datetimteToLocalDate(rs.getString("fecha_creacion"));
+                Liga liga = new Liga(rs.getInt("ligaID"), rs.getString("ligaNombre"), null, null);
+
+                Equipo e = new Equipo(idEquipo, nombre, estadio, colorP, colorS, cuota, fechaCreacion, liga);
+                equiposReturn.add(e);
+
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return liga;
+
+        return equiposReturn;
     }
 
     /**
@@ -158,18 +214,6 @@ public class LigaRepository implements Repository<Liga>{
             throw new RuntimeException(e);
         }
         return jornadasReturn;
-    }
-
-    public Liga findByIdWithJornadas(int idLiga)
-    {
-        Liga liga = findById(idLiga);
-
-        if(liga != null)
-        {
-            // List<Jornada> jornadas = JR.findByLigaId(int id); #TODO
-            // liga.setJornadas(jornadas);
-        }
-        return liga;
     }
 
 

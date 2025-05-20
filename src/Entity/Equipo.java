@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Equipo {
+public class Equipo implements Comparable<Equipo> {
 
     private int id;
     private String nombre;
@@ -109,4 +109,12 @@ public class Equipo {
     }
 
 
+    /**
+     * @param o the object to be compared.
+     * @return
+     */
+    @Override
+    public int compareTo(Equipo e) {
+        return Integer.compare(this.id, e.getId()); // comparacion de IDs
+    }
 }

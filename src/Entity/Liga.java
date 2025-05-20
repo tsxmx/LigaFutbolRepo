@@ -71,6 +71,62 @@ public class Liga {
         this.jornadas = jornadas;
     }
 
+    public Set<Equipo> getEquiposSorted() {
+        return equiposSorted;
+    }
+
+    public void setEquiposSorted(Set<Equipo> equiposSorted) {
+        this.equiposSorted = equiposSorted;
+    }
+
+    public Map<Integer, Equipo> getEquiposfind() {
+        return equiposfind;
+    }
+
+    public void setEquiposfind(Map<Integer, Equipo> equiposfind) {
+        this.equiposfind = equiposfind;
+    }
+
+    // Metodos propios de la clase
+
+    public void addEquipo(Equipo equipo)
+    {
+        if(equipo.getLiga() != null) {
+            equipo.getLiga().removeEquipo(equipo); // solo elimina el equipo si este ya trae una liga dentro (update)
+         }
+        this.equiposSorted.add(equipo);
+        this.equiposfind.put(equipo.getId(), equipo);
+        equipo.setLiga(this);
+    }
+
+    public void addAllEquipos(List<Equipo> equipos)
+    {
+        for(Equipo e : equipos)
+        {
+            if(e.getLiga() != null){
+                e.getLiga().removeEquipo(e);
+            }
+            this.equiposSorted.add(e);
+            this.equiposfind.put(e.getId(), e);
+            e.setLiga(this);
+        }
+    }
+
+    public void removeEquipo(Equipo equipo)
+    {
+        this.equiposSorted.remove(equipo);
+        this.equiposfind.remove(equipo.getId());
+    }
+
+    public void addjornada(Jornada jornada)
+    {
+
+    }
+
+    public void removeJornada(Jornada jornada)
+    {
+
+    }
     // Metodos override
 
 
