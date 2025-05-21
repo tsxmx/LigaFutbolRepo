@@ -118,15 +118,22 @@ public class Liga {
         this.equiposfind.remove(equipo.getId());
     }
 
-    public void addjornada(Jornada jornada)
+    public void addJornada(Jornada j)
     {
+        if(j.getLiga() != null) {
+            j.getLiga().removeJornada(j); // solo elimina el equipo si este ya trae una liga dentro (update)
+        }
 
+        this.jornadas.add(j);
+        j.setLiga(this);
     }
 
-    public void removeJornada(Jornada jornada)
+    public void removeJornada(Jornada j)
     {
-
+        this.jornadas.remove(j);
     }
+
+
     // Metodos override
 
 

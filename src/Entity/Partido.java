@@ -16,12 +16,12 @@ public class Partido {
     private Equipo local;
     private Equipo visitante;
 
-    private List<Evento> eventos;
+    private List<Evento> eventos = new ArrayList<>();
 
     // CONSTRUCTOR
 
 
-    public Partido(int id, int golesLocal, int golesVisitante, LocalDate fechaInicio, Jornada jornada, Equipo local, Equipo visitante, List<Evento> eventos) {
+    public Partido(int id, int golesLocal, int golesVisitante, LocalDate fechaInicio, Jornada jornada, Equipo local, Equipo visitante) {
 
         this.id = id;
         this.golesLocal = golesLocal;
@@ -30,7 +30,6 @@ public class Partido {
         this.jornada = jornada;
         this.local = local;
         this.visitante = visitante;
-        this.eventos = eventos;
     }
 
     // Getters & Setters

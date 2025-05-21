@@ -1,5 +1,7 @@
 import Entity.Equipo;
+import Entity.Jornada;
 import Entity.Liga;
+import Entity.Partido;
 import Repository.EquipoRepository;
 import Repository.JornadaRepository;
 import Repository.JugadorRepository;
@@ -15,17 +17,20 @@ public class App {
 
 
 
-        LigaRepository ligaRepo = new LigaRepository();
-        List<Equipo> equipos = new ArrayList<>();
+        JornadaRepository JornadaRepo = new JornadaRepository();
+        List<Partido> partidos   = new ArrayList<>();
 
-        equipos.addAll(ligaRepo.findEquiposByLigaId(1));
+        partidos.addAll(JornadaRepo.findPartidosByJornadaId(1));
 
+        System.out.println(partidos);
 
-
-        for(Equipo e : equipos)
+        /*
+        for(Jornada j : jornadas)
         {
-            System.out.println(e.getNombre());
+            System.out.println(j.getPartidos().getFirst().getJornada().getLiga().getNombre());
         }
+
+         */
 
     }
 }

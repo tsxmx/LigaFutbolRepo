@@ -1,6 +1,8 @@
 package Entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Jornada {
@@ -9,6 +11,8 @@ public class Jornada {
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
     private Liga liga;
+
+    private List<Partido> partidos = new ArrayList<>();
 
     // Constructor
 
@@ -54,5 +58,28 @@ public class Jornada {
 
     public void setLiga(Liga liga) {
         this.liga = liga;
+    }
+
+    public List<Partido> getPartidos() {
+        return partidos;
+    }
+
+    public void setPartidos(List<Partido> partidos) {
+        this.partidos = partidos;
+    }
+
+    public void addPartido (Partido p)
+    {
+        if(p.getJornada() != null)
+        {
+            p.getJornada().removePartido(p);
+        }
+        this.partidos.add(p);
+        p.setJornada(this);
+    }
+
+    public void removePartido (Partido p)
+    {
+        this.partidos.remove(p);
     }
 }
