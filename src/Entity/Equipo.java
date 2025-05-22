@@ -108,6 +108,22 @@ public class Equipo implements Comparable<Equipo> {
         this.plantilla = plantilla;
     }
 
+    public void addJugador(Jugador jug)
+    {
+        if(jug.getEquipo() != null)
+        {
+            jug.getEquipo().removeJugador(jug);
+        }
+
+        this.plantilla.add(jug);
+        jug.setEquipo(this);
+    }
+
+    public void removeJugador(Jugador jug)
+    {
+        plantilla.remove(jug);
+    }
+
 
     /**
      * @param o the object to be compared.

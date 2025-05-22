@@ -17,20 +17,18 @@ public class App {
 
 
 
-        JornadaRepository JornadaRepo = new JornadaRepository();
-        List<Partido> partidos   = new ArrayList<>();
+        EquipoRepository ER = new EquipoRepository();
+        List<Equipo> equipos   = new ArrayList<>();
 
-        partidos.addAll(JornadaRepo.findPartidosByJornadaId(1));
+        equipos.addAll(ER.findAll());
 
-        System.out.println(partidos);
-
-        /*
-        for(Jornada j : jornadas)
+        for(Equipo e : equipos)
         {
-            System.out.println(j.getPartidos().getFirst().getJornada().getLiga().getNombre());
+            System.out.println(e.getNombre());
+            System.out.println(e.getPlantilla().getFirst().getNombre());
         }
 
-         */
+
 
     }
 }

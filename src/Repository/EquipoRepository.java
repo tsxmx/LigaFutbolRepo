@@ -1,8 +1,6 @@
 package Repository;
 
-import Entity.Color;
-import Entity.Equipo;
-import Entity.Liga;
+import Entity.*;
 import Helper.Converter;
 import Util.DBC;
 
@@ -17,8 +15,8 @@ import java.util.List;
 public class EquipoRepository implements Repository<Equipo> {
 
 
-    private LigaRepository LR;
-    private JugadorRepository JR;
+    private LigaRepository LR = new LigaRepository();
+    private JugadorRepository JR = new JugadorRepository();
 
     private Connection getConnection() throws SQLException
     {
@@ -38,15 +36,15 @@ public class EquipoRepository implements Repository<Equipo> {
 
             Connection con = getConnection();
 
-            String query = "SELECT  idEquipo, " +
-                                    "nombre, " +
-                                    "estadio, " +
-                                    "color_primario, " +
-                                    "color_secundario, " +
-                                    "cuota, " +
-                                    "DATE(fecha_creacion) as fecha_creacion, " +
-                                    "liga_id " +
-                            "FROM Equipo";
+            String query = "SELECT  e.idEquipo, " +
+                                    "e.nombre as nombreEquipo, " +
+                                    "e.estadio, " +
+                                    "e.color_primario, " +
+                                    "e.color_secundario, " +
+                                    "e.cuota, " +
+                                    "DATE(e.fecha_creacion) as fecha_creacion, " +
+                                    "e.liga_id " +
+                            "FROM equipo e";
 
 
             PreparedStatement pstmt = con.prepareStatement(query);
@@ -55,16 +53,72 @@ public class EquipoRepository implements Repository<Equipo> {
             while(rs.next())
             {
                 int idEquipo = rs.getInt("idEquipo");
-                String nombreEquipo = rs.getString("nombre");
+                String nombreEquipo = rs.getString("nombreEquipo");
                 String estadio = rs.getString("estadio");
                 String colorP = rs.getString("color_primario");
                 String colorS = rs.getString("color_secundario");
                 double cuota = rs.getDouble("cuota");
                 LocalDate fechaCreacion = Converter.datetimteToLocalDate(rs.getString("fecha_creacion"));
+                Liga liga = LR.findById(rs.getInt("liga_id"));
 
-                //Equipo equipo = new Equipo(idEquipo, nombreEquipo, estadio, Color.valueOf(colorP), Color.valueOf(colorS), cuota, fechaCreacion);
-                //equiposReturn.add(equipo);
+                Equipo equipo = new Equipo(idEquipo, nombreEquipo, estadio, Color.valueOf(colorP), Color.valueOf(colorS), cuota, fechaCreacion, liga);
+                equiposReturn.add(equipo);
             }
+
+
+            for(Equipo e : equiposReturn)
+            {
+                List<Jugador> jugadores = new ArrayList<>();
+                con = getConnection();
+
+                query = "SELECT  j.idJugador, " +
+                                "j.nombre, " +
+                                "DATE(j.fecha_nacimiento) as fechaNac, " +
+                                "j.nacionalidad, " +
+                                "j.dorsal, " +
+                                "j.pro, " +
+                                //"j.equipo_idEquipo, " +
+                                "j.posicion " +
+                        "FROM equipo e " +
+                        "JOIN jugador j " +
+                        "on e.idEquipo = j.equipo_idequipo " +
+                        "WHERE e.idEquipo = ?";
+
+
+                pstmt = con.prepareStatement(query);
+                pstmt.setInt(1, e.getId());
+                rs = pstmt.executeQuery();
+
+                while(rs.next())
+                {
+                    Jugador jug;
+                    int pro = rs.getInt("pro");
+
+                    int idjugador = rs.getInt("idJugador");
+                    String nombre = rs.getString("nombre");
+                    LocalDate fechaNaci = Converter.datetimteToLocalDate(rs.getString("fechaNac"));
+                    Nacionalidad nacionalidad = Nacionalidad.valueOf(rs.getString("nacionalidad"));
+                    int dorsal = rs.getInt("dorsal");
+                    Posicion pos = Posicion.valueOf(rs.getString("posicion"));
+
+
+                    if(pro == 1)
+                    {
+                        jug = new JugadorPayable(idjugador, nombre, fechaNaci, nacionalidad, pos, dorsal, e);
+                    }
+                    else
+                    {
+                        jug = new Jugador(idjugador, nombre, fechaNaci, nacionalidad, pos, dorsal, e);
+                    }
+                    e.addJugador(jug);
+                    jugadores.add(jug);
+
+                }
+
+                e.setPlantilla(jugadores);
+
+            }
+
         }
         catch (SQLException e) {
             throw new RuntimeException(e);
@@ -107,13 +161,13 @@ public class EquipoRepository implements Repository<Equipo> {
                 int idEquipo = rs.getInt("idEquipo");
                 String nombreEquipo = rs.getString("nombre");
                 String estadio = rs.getString("estadio");
-                String colorP = rs.getString("color_primario");
-                String colorS = rs.getString("color_secundario");
+                Color colorP = Color.valueOf(rs.getString("color_primario"));
+                Color colorS = Color.valueOf(rs.getString("color_secundario"));
                 double cuota = rs.getDouble("cuota");
                 LocalDate fechaCreacion = Converter.datetimteToLocalDate(rs.getString("fecha_creacion"));
-                Liga liga = new Liga(rs.getInt("liga_id"), null, null, null); // Stub de la liga -> solo la Id
+                Liga liga = LR.findById(rs.getInt("liga_id"));
 
-                equipoReturn = new Equipo(idEquipo, nombreEquipo, estadio, Color.valueOf(colorP), Color.valueOf(colorS), cuota, fechaCreacion, null);
+                equipoReturn = new Equipo(idEquipo, nombreEquipo, estadio, colorP, colorS, cuota, fechaCreacion, liga);
             }
         }
         catch (SQLException e) {
@@ -121,6 +175,64 @@ public class EquipoRepository implements Repository<Equipo> {
         }
 
         return equipoReturn;
+    }
+
+    public List<Jugador> findJugadoresByEquipoId(int id)
+    {
+        List<Jugador> jugadores = new ArrayList<>();
+
+        try{
+            Connection con = getConnection();
+
+            String query = "SELECT  j.idJugador, " +
+                    "j.nombre, " +
+                    "DATE(j.fecha_nacimiento) as fechaNac, " +
+                    "j.nacionalidad, " +
+                    "j.dorsal, " +
+                    "j.pro, " +
+                    "j.equipo_idEquipo, " +
+                    "j.posicion " +
+                    "FROM equipo e " +
+                    "JOIN jugador j " +
+                    "on e.idEquipo = j.equipo_idequipo " +
+                    "WHERE e.idEquipo = ?";
+
+
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next())
+            {
+                Jugador jug;
+                int pro = rs.getInt("pro");
+
+                int idjugador = rs.getInt("idJugador");
+                String nombre = rs.getString("nombre");
+                LocalDate fechaNaci = Converter.datetimteToLocalDate(rs.getString("fechaNac"));
+                Nacionalidad nacionalidad = Nacionalidad.valueOf(rs.getString("nacionalidad"));
+                int dorsal = rs.getInt("dorsal");
+                Posicion pos = Posicion.valueOf(rs.getString("posicion"));
+                Equipo equipo = findById(rs.getInt("equipo_idEquipo"));
+
+                if(pro == 1)
+                {
+                    jug = new JugadorPayable(idjugador, nombre, fechaNaci, nacionalidad, pos, dorsal, equipo);
+                }
+                else
+                {
+                    jug = new Jugador(idjugador, nombre, fechaNaci, nacionalidad, pos, dorsal, equipo);
+                }
+                equipo.addJugador(jug);
+                jugadores.add(jug);
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        return jugadores;
     }
 
 
@@ -141,7 +253,7 @@ public class EquipoRepository implements Repository<Equipo> {
                                     "DATE(fecha_creacion) as fecha_creacion, " +
                                     "liga_id " +
                                     "FROM Equipo " +
-                            "WHERE idEquipo = ?";
+                            "WHERE liga_id = ?";
 
             PreparedStatement pstmt = con.prepareStatement(query);
             pstmt.setInt(1, id);
@@ -157,14 +269,14 @@ public class EquipoRepository implements Repository<Equipo> {
                 double cuota = rs.getDouble("cuota");
                 LocalDate fechaCreacion = Converter.datetimteToLocalDate(rs.getString("fecha_creacion"));
 
-                Equipo equipo = new Equipo(idEquipo, nombreEquipo, estadio, Color.valueOf(colorP), Color.valueOf(colorS), cuota, fechaCreacion, null);
+                Equipo equipo = new Equipo(idEquipo, nombreEquipo, estadio, Color.valueOf(colorP), Color.valueOf(colorS), cuota, fechaCreacion,
+                                            LR.findById(rs.getInt("liga_id")));
                 equiposReturn.add(equipo);
             }
         }
         catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
         return equiposReturn;
     }
     

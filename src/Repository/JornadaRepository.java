@@ -1,5 +1,6 @@
 package Repository;
 
+import Entity.Equipo;
 import Entity.Jornada;
 import Entity.Liga;
 import Entity.Partido;
@@ -77,9 +78,8 @@ public class JornadaRepository implements Repository<Jornada>{
                     int golesLocal = rs.getInt("goles_local");
                     int golesVisitante = rs.getInt("goles_visitante");
                     LocalDate fechaInicio = Converter.datetimteToLocalDate(rs.getString("fecha_inicioP"));
-                    // Jornada = j;
-                    //Equipo eLocal = ER.findById(rs.getInt(idLocal);
-                    //Equipo eVisitante = ER.findById(rs.getInt(idVisitante);
+                    Equipo eLocal = ER.findById(rs.getInt("idLocal"));
+                    Equipo eVisitante = ER.findById(rs.getInt("idVisitante"));
 
                     Partido p = new Partido(idPartido, golesLocal, golesVisitante, fechaInicio, j, null, null); // hacer en cuanto este hecho el ER
                     j.addPartido(p);
@@ -88,9 +88,6 @@ public class JornadaRepository implements Repository<Jornada>{
 
                 j.setPartidos(partidosJornada);
             }
-
-
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -164,8 +161,8 @@ public class JornadaRepository implements Repository<Jornada>{
                 int golesVisitante = rs.getInt("goles_visitante");
                 LocalDate fechaInicio = Converter.datetimteToLocalDate(rs.getString("fecha_inicioP"));
                 Jornada j = findById(rs.getInt("jornada_id"));
-                //Equipo eLocal = ER.findById(rs.getInt(idLocal);
-                //Equipo eVisitante = ER.findById(rs.getInt(idVisitante);
+                Equipo eLocal = ER.findById(rs.getInt("idLocal"));
+                Equipo eVisitante = ER.findById(rs.getInt("idVisitante"));
 
                 Partido p = new Partido(idPartido, golesLocal, golesVisitante, fechaInicio, j, null, null); // hacer en cuanto este hecho el ER
                 partidos.add(p);
