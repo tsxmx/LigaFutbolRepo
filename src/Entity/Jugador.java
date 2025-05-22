@@ -97,4 +97,20 @@ public class Jugador {
     public void setEventos(List<Evento> eventos) {
         this.eventos = eventos;
     }
+
+    public void addEvento(Evento event)
+    {
+        if(event.getJugador() != null)
+        {
+            event.getJugador().removeEvento(event);
+        }
+
+        this.eventos.add(event);
+        event.setJugador(this);
+    }
+
+    public void removeEvento(Evento event)
+    {
+        eventos.remove(event);
+    }
 }

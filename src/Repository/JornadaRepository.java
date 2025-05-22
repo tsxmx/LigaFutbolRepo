@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 
 public class JornadaRepository implements Repository<Jornada>{
 
@@ -81,7 +82,7 @@ public class JornadaRepository implements Repository<Jornada>{
                     Equipo eLocal = ER.findById(rs.getInt("idLocal"));
                     Equipo eVisitante = ER.findById(rs.getInt("idVisitante"));
 
-                    Partido p = new Partido(idPartido, golesLocal, golesVisitante, fechaInicio, j, null, null); // hacer en cuanto este hecho el ER
+                    Partido p = new Partido(idPartido, golesLocal, golesVisitante, fechaInicio, j, eLocal, eVisitante); // hacer en cuanto este hecho el ER
                     j.addPartido(p);
                     partidosJornada.add(p);
                 }
@@ -164,7 +165,7 @@ public class JornadaRepository implements Repository<Jornada>{
                 Equipo eLocal = ER.findById(rs.getInt("idLocal"));
                 Equipo eVisitante = ER.findById(rs.getInt("idVisitante"));
 
-                Partido p = new Partido(idPartido, golesLocal, golesVisitante, fechaInicio, j, null, null); // hacer en cuanto este hecho el ER
+                Partido p = new Partido(idPartido, golesLocal, golesVisitante, fechaInicio, j, eLocal, eVisitante); // hacer en cuanto este hecho el ER
                 partidos.add(p);
             }
         } catch (SQLException e) {
