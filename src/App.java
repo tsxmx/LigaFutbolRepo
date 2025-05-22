@@ -1,7 +1,4 @@
-import Entity.Equipo;
-import Entity.Jornada;
-import Entity.Liga;
-import Entity.Partido;
+import Entity.*;
 import Repository.EquipoRepository;
 import Repository.JornadaRepository;
 import Repository.JugadorRepository;
@@ -17,15 +14,14 @@ public class App {
 
 
 
-        EquipoRepository ER = new EquipoRepository();
-        List<Equipo> equipos   = new ArrayList<>();
+        JugadorRepository JR = new JugadorRepository();
+        List<Jugador> jugadores = new ArrayList<>();
 
-        equipos.addAll(ER.findAll());
+        jugadores.addAll(JR.findAll());
 
-        for(Equipo e : equipos)
+        for(Jugador j : jugadores)
         {
-            System.out.println(e.getNombre());
-            System.out.println(e.getPlantilla().getFirst().getNombre());
+            System.out.println(j.getNombre());
         }
 
 

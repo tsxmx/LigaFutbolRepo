@@ -19,7 +19,9 @@ public class PartidoRepository implements Repository<Partido> {
      */
     @Override
     public List<Partido> findAll() {
-        return List.of();
+
+        return null;
+
     }
 
     /**

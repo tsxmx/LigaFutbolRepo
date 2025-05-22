@@ -15,7 +15,6 @@ import java.util.List;
 public class JugadorRepository implements Repository<Jugador> {
 
     EquipoRepository ER = new EquipoRepository();
-    JugadorRepository JR = new JugadorRepository();
     PartidoRepository PR = new PartidoRepository();
     TipoEventoRepository TR = new TipoEventoRepository();
 
@@ -99,7 +98,7 @@ public class JugadorRepository implements Repository<Jugador> {
                 {
                     int idEvento = rs.getInt("idevento");
                     // Local DateTime
-                    Jugador jugador = JR.findById(rs.getInt("idJugador"));
+                    Jugador jugador = findById(rs.getInt("idJugador"));
                     //Partido partido = PR.findById();
                     //TipoEvento tipoEv = TR.findbyId();
 

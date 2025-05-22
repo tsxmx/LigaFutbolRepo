@@ -16,7 +16,6 @@ public class EquipoRepository implements Repository<Equipo> {
 
 
     private LigaRepository LR = new LigaRepository();
-    private JugadorRepository JR = new JugadorRepository();
 
     private Connection getConnection() throws SQLException
     {
