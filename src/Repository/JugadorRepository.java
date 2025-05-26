@@ -97,12 +97,12 @@ public class JugadorRepository implements Repository<Jugador> {
                 while(rs.next())
                 {
                     int idEvento = rs.getInt("idevento");
-                    // Local DateTime
+                    // Local DateTime minuto
                     Jugador jugador = findById(rs.getInt("idJugador"));
-                    //Partido partido = PR.findById();
+                    Partido partido = PR.findById(rs.getInt("partido_id"));
                     //TipoEvento tipoEv = TR.findbyId();
 
-                    Evento event = new Evento(idEvento, null, jugador, null, null);
+                    Evento event = new Evento(idEvento, null, jugador, partido, null);
 
                     j.addEvento(event);
                     eventos.add(event);
@@ -132,16 +132,18 @@ public class JugadorRepository implements Repository<Jugador> {
             Connection con = getConnection();
 
             String query = "SELECT idJugador, " +
-                    "nombre, " +
-                    "DATE(fecha_nacimiento) as fechaNac, " +
-                    "nacionalidad, " +
-                    "dorsal, " +
-                    "pro, " +
-                    "Equipo_idEquipo, " +
-                    "posicion " +
-                    "FROM jugador";
+                                    "nombre, " +
+                                    "DATE(fecha_nacimiento) as fechaNac, " +
+                                    "nacionalidad, " +
+                                    "dorsal, " +
+                                    "pro, " +
+                                    "Equipo_idEquipo, " +
+                                    "posicion " +
+                            "FROM jugador " +
+                            "WHERE idJugador = ?";
 
             PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, id);
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next())
@@ -165,17 +167,53 @@ public class JugadorRepository implements Repository<Jugador> {
                 {
                     jug = new Jugador(idjugador, nombre, fechaNaci, nacionalidad, pos, dorsal, equipo);
                 }
-
-
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return jug;
+    }
 
+    public List<Evento> findEventosByJugadorId(int id)
+    {
+        List<Evento> eventos = new ArrayList<>();
+
+        try{
+            Connection con = getConnection();
+
+            String query = "SELECT j.idJugador, " +
+                                    "e.idevento, " +
+                                    "e.minuto, " +
+                                    "e.jugador_idJugador, " +
+                                    "e.partido_id, " +
+                                    "e.TipoEvento_idTipoEvento " +
+                    "FROM jugador j " +
+                    "JOIN evento e " +
+                    "on j.idJugador = e.Jugador_idJugador " +
+                    "WHERE j.idJugador = ?";
+
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next())
+            {
+                int idEvento = rs.getInt("idevento");
+                // Local DateTime
+                Jugador jugador = findById(rs.getInt("idJugador"));
+                //Partido partido = PR.findById();
+                //TipoEvento tipoEv = TR.findbyId();
+
+                Evento event = new Evento(idEvento, null, jugador, null, null);
+
+                eventos.add(event);
+            }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        return jug;
-
+        return eventos;
     }
 
     /**

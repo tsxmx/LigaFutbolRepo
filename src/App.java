@@ -1,8 +1,5 @@
 import Entity.*;
-import Repository.EquipoRepository;
-import Repository.JornadaRepository;
-import Repository.JugadorRepository;
-import Repository.LigaRepository;
+import Repository.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,15 +11,15 @@ public class App {
 
 
 
-        JugadorRepository JR = new JugadorRepository();
-        List<Jugador> jugadores = new ArrayList<>();
+        PartidoRepository PR = new PartidoRepository();
+        Partido partido;
 
-        jugadores.addAll(JR.findAll());
+        partido = PR.findById(2);
 
-        for(Jugador j : jugadores)
-        {
-            System.out.println(j.getNombre());
-        }
+
+
+            System.out.println(partido.getFechaInicio());
+
 
 
 

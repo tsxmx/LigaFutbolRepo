@@ -98,4 +98,20 @@ public class Partido {
     public void setEventos(List<Evento> eventos) {
         this.eventos = eventos;
     }
+
+    public void addEvento(Evento event)
+    {
+        if(event.getPartido() != null)
+        {
+            event.getPartido().removeEvento(event);
+        }
+
+        this.eventos.add(event);
+        event.setPartido(this);
+    }
+
+    public void removeEvento(Evento event)
+    {
+        eventos.remove(event);
+    }
 }
