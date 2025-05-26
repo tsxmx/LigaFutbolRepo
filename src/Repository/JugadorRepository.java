@@ -97,12 +97,12 @@ public class JugadorRepository implements Repository<Jugador> {
                 while(rs.next())
                 {
                     int idEvento = rs.getInt("idevento");
-                    // Local DateTime minuto
+                    int minuto = rs.getInt("minuto");
                     Jugador jugador = findById(rs.getInt("idJugador"));
                     Partido partido = PR.findById(rs.getInt("partido_id"));
                     //TipoEvento tipoEv = TR.findbyId();
 
-                    Evento event = new Evento(idEvento, null, jugador, partido, null);
+                    Evento event = new Evento(idEvento, minuto, jugador, partido, null);
 
                     j.addEvento(event);
                     eventos.add(event);
@@ -146,7 +146,7 @@ public class JugadorRepository implements Repository<Jugador> {
             pstmt.setInt(1, id);
             ResultSet rs = pstmt.executeQuery();
 
-            while (rs.next())
+            if(rs.next())
             {
 
                 int idjugador = rs.getInt("idJugador");
@@ -199,12 +199,12 @@ public class JugadorRepository implements Repository<Jugador> {
             while(rs.next())
             {
                 int idEvento = rs.getInt("idevento");
-                // Local DateTime
+                int minuto = rs.getInt("minuto");
                 Jugador jugador = findById(rs.getInt("idJugador"));
-                //Partido partido = PR.findById();
-                //TipoEvento tipoEv = TR.findbyId();
+                Partido partido = PR.findById(rs.getInt("partido_id"));
+                TipoEvento tipoEv = TR.findById(rs.getInt("tipoEvento_idTipoEvento"));
 
-                Evento event = new Evento(idEvento, null, jugador, null, null);
+                Evento event = new Evento(idEvento, minuto, jugador, partido, tipoEv);
 
                 eventos.add(event);
             }

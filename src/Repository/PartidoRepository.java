@@ -16,6 +16,7 @@ public class PartidoRepository implements Repository<Partido> {
 
     JornadaRepository JR = new JornadaRepository();
     EquipoRepository ER = new EquipoRepository();
+    TipoEventoRepository TR = new TipoEventoRepository();
 
     private Connection getConnection() throws SQLException
     {
@@ -82,12 +83,12 @@ public class PartidoRepository implements Repository<Partido> {
                 while(rs.next())
                 {
                     int idEvento = rs.getInt("idevento");
-                    // Local DateTime
+                    int minuto = rs.getInt("minuto");
                     Jugador jugador = new Jugador(rs.getInt("idJugador"), null, null,null,null,0,null);
                     Partido partido = findById(rs.getInt("partido_id"));
-                    //TipoEvento tipoEv = TR.findbyId();
+                    TipoEvento tipoEv = TR.findById(rs.getInt("TipoEvento_idTipoEvento"));
 
-                    Evento event = new Evento(idEvento, null, jugador, p, null);
+                    Evento event = new Evento(idEvento, minuto, jugador, p, tipoEv);
 
                     p.addEvento(event);
                     eventos.add(event);

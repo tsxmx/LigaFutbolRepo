@@ -1,20 +1,20 @@
 package Entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TipoEvento {
 
     private int id;
     private String nombre;
-    private List<Evento> eventos;
+    private List<Evento> eventos = new ArrayList<>();
 
     // Constructor
 
-    public TipoEvento(int id, String nombre, List<Evento> eventos) {
+    public TipoEvento(int id, String nombre) {
 
         this.id = id;
         this.nombre = nombre;
-        this.eventos = eventos;
     }
 
     // Getter y Setter
@@ -42,5 +42,21 @@ public class TipoEvento {
 
     public void setEventos(List<Evento> eventos) {
         this.eventos = eventos;
+    }
+
+    public void addEvento(Evento event)
+    {
+        if(event.getTipo() != null)
+        {
+            event.getTipo().removeEvento(event);
+        }
+
+        this.eventos.add(event);
+        event.setTipo(this);
+    }
+
+    public void removeEvento(Evento event)
+    {
+        eventos.remove(event);
     }
 }

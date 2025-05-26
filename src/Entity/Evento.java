@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public class Evento {
 
     private int id;
-    LocalDateTime minuto;
+    int minuto;
     private Jugador jugador;
     private Partido partido;
     private TipoEvento tipo;
@@ -13,7 +13,7 @@ public class Evento {
     // Constructor
 
 
-    public Evento(int id, LocalDateTime minuto, Jugador jugador, Partido partido, TipoEvento tipo) {
+    public Evento(int id, int minuto, Jugador jugador, Partido partido, TipoEvento tipo) {
 
         this.id = id;
         this.minuto = minuto;
@@ -33,11 +33,11 @@ public class Evento {
         this.id = id;
     }
 
-    public LocalDateTime getMinuto() {
+    public int getMinuto() {
         return minuto;
     }
 
-    public void setMinuto(LocalDateTime minuto) {
+    public void setMinuto(int minuto) {
         this.minuto = minuto;
     }
 
@@ -64,4 +64,6 @@ public class Evento {
     public void setTipo(TipoEvento tipo) {
         this.tipo = tipo;
     }
+
+
 }
