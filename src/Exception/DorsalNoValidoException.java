@@ -1,8 +1,8 @@
 package Exception;
 
 public class DorsalNoValidoException extends Exception{
-    public DorsalNoValidoException()
+    public DorsalNoValidoException(String message)
     {
-        super("Dorsal no valido!");
+        super(message);
     }
 }

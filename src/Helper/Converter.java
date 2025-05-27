@@ -12,9 +12,4 @@ public class Converter {
 
         return LocalDate.parse(dateTime, formater);
     }
-
-    public static int SqlMinutosToInt(String datetime)
-    {
-        return 0;
-    }
 }
