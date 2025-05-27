@@ -61,7 +61,7 @@ public class Lector {
         int numero = 0;
 
         do {
-            numero = getNumero("Introduce un numero entre " + minimo + ", y " + maximo + " : ");
+            numero = getNumero("");
 
             try {
                 Validator.numeroEnRango(minimo,maximo, numero);

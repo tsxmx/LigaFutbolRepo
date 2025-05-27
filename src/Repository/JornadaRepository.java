@@ -38,7 +38,7 @@ public class JornadaRepository implements Repository<Jornada>{
         {
             Connection con = getConnection();
 
-            String query = "SELECT ID, DATE(fecha_inicio) as fecha_inicio, DATE(fecha_fin) as fecha_fin, liga_id FROM jornada";
+            String query = "SELECT ID, DATE(fecha_inicio) as fecha_inicio, DATE(fecha_fin) as fecha_fin, liga_id FROM jornada order by 1";
 
             PreparedStatement pstmt = con.prepareStatement(query);
             ResultSet rs = pstmt.executeQuery();

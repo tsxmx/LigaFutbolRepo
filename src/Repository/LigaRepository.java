@@ -37,7 +37,7 @@ public class LigaRepository implements Repository<Liga>{
             Connection con = getConnection();
 
             String query =  "select id, nombre, DATE(fecha_inicio) fecha_inicio, DATE(fecha_fin) as fecha_fin " +
-                            "from liga";
+                            "from liga order by 1";
 
 
             PreparedStatement pstmt = con.prepareStatement(query);

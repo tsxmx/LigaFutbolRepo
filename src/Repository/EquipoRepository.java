@@ -184,17 +184,17 @@ public class EquipoRepository implements Repository<Equipo> {
             Connection con = getConnection();
 
             String query = "SELECT  j.idJugador, " +
-                    "j.nombre, " +
-                    "DATE(j.fecha_nacimiento) as fechaNac, " +
-                    "j.nacionalidad, " +
-                    "j.dorsal, " +
-                    "j.pro, " +
-                    "j.equipo_idEquipo, " +
-                    "j.posicion " +
-                    "FROM equipo e " +
-                    "JOIN jugador j " +
-                    "on e.idEquipo = j.equipo_idequipo " +
-                    "WHERE e.idEquipo = ?";
+                                    "j.nombre, " +
+                                    "DATE(j.fecha_nacimiento) as fechaNac, " +
+                                    "j.nacionalidad, " +
+                                    "j.dorsal, " +
+                                    "j.pro, " +
+                                    "j.equipo_idEquipo, " +
+                                    "j.posicion " +
+                            "FROM equipo e " +
+                            "JOIN jugador j " +
+                                "on e.idEquipo = j.equipo_idequipo " +
+                            "WHERE e.idEquipo = ?";
 
 
             PreparedStatement pstmt = con.prepareStatement(query);
@@ -252,7 +252,8 @@ public class EquipoRepository implements Repository<Equipo> {
                                     "DATE(fecha_creacion) as fecha_creacion, " +
                                     "liga_id " +
                                     "FROM Equipo " +
-                            "WHERE liga_id = ?";
+                            "WHERE liga_id = ? " +
+                            "order by 1";
 
             PreparedStatement pstmt = con.prepareStatement(query);
             pstmt.setInt(1, id);

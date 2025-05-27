@@ -11,7 +11,6 @@ public enum Color {
     MORADO,
     GRIS,
     CELESTE,
-    BORDO,
     ROSA,
     MARRÓN,
     DORADO,

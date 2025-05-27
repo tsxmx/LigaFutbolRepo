@@ -31,7 +31,7 @@ public class Validator {
 
     public static boolean numeroEnRango(int min, int max, int numero)
     {
-        if(numero >= min && numero <= max){
+        if(!(numero >= min && numero <= max)){
             throw new NumeroFueraDeRango("ERROR :: El numero se encuentra fuera del rango establecido");
         }
 
