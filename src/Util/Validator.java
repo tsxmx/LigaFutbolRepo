@@ -1,10 +1,14 @@
 package Util;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 import Exception.*;
+import Entity.Color;
 
 public class Validator {
 
@@ -28,6 +32,21 @@ public class Validator {
 
         return true;
     }
+
+    public static boolean esDouble(String cad) {
+
+        if (cad == null || cad.isEmpty()) {
+            throw new CadenaVacia("ERROR :: La cadena introducida esta Vacía");
+        }
+
+        if (!cad.matches("^\\d*\\.?\\d+$")) { // \d+ significa uno o más dígitos
+            throw new NumeroNoValido("ERROR :: La cadena introducida no es un numero decimal");
+        };
+
+        return true;
+    }
+
+
 
     public static boolean numeroEnRango(int min, int max, int numero)
     {
@@ -106,9 +125,4 @@ public class Validator {
             return false; // devuelve falso en caso de que salte la excepcion (lo que significa que la fecha no es valida)
         }
     }
-
-
-
-
-
 }

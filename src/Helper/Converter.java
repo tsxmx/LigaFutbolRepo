@@ -19,38 +19,52 @@ public class Converter {
 
     public static String colorToAANSI(Color c)
     {
+        String color = null;
         switch (c) {
             case NEGRO:
-                return "\u001B[30m";
+                color = "\u001B[30m";
+                break;
             case ROJO:
-                return "\u001B[31m";
+                color = "\u001B[31m";
+                break;
             case VERDE:
-                return "\u001B[32m";
+                color = "\u001B[32m";
+                break;
             case AMARILLO:
-                return "\u001B[33m";
+                color = "\u001B[33m";
+                break;
             case AZUL:
-                return "\u001B[34m";
+                color = "\u001B[34m";
+                break;
             case MORADO:
-                return "\u001B[35m";
+                color = "\u001B[35m";
+                break;
             case CELESTE:
-                return "\u001B[36m";
+                color = "\u001B[36m";
+                break;
             case BLANCO:
-                return "\u001B[37m";
+                color = "\u001B[37m";
+                break;
             case GRIS:
-                return "\u001B[90m";
+                color = "\u001B[90m";
+                break;
             case NARANJA:
-                return "\u001B[33m";
+                color =  "\u001B[33m";
+                break;
             case ROSA:
-                return "\u001B[35m";
+                color =  "\u001B[35m";
+                break;
             case MARRÓN:
-                return "\u001B[33m";
+                color =  "\u001B[33m";
+                break;
             case DORADO:
-                return "\u001B[33m";
+                color =  "\u001B[33m";
+                break;
             case PLATEADO:
-                return "\u001B[37m";
-            default:
-                return ANSI_RESET;
+                color =  "\u001B[37m";
+                break;
         }
+        return color;
     }
 }
 

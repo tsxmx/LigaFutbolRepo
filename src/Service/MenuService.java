@@ -38,7 +38,7 @@ public class MenuService {
         ArrayList<String> listaOpciones = new ArrayList<>();
 
         listaOpciones.add("1. Crear Equipo");
-        listaOpciones.add("2. Eliminar Empleado");
+        listaOpciones.add("2. Eliminar Equipo");
         listaOpciones.add("3. Añadir Jugador");
         listaOpciones.add("4. Eliminar jugador");
         listaOpciones.add("5. Ver Equipos");
@@ -72,6 +72,15 @@ public class MenuService {
         listaOpciones.add("3. Salir del programa");
 
         return mostrarMenu(listaOpciones, "Creacion de Jugador"); // return de la opcion
+    }
+
+    public int menuEliminar(){
+        ArrayList<String> listaOpciones = new ArrayList<>();
+
+        listaOpciones.add("1. continuar");
+        listaOpciones.add("2. Salir");
+
+        return mostrarMenu(listaOpciones, "¿Seguro que desea Eliminar?"); // return de la opcion
     }
 
     public int menuNarrarPartido(Partido partido){
@@ -111,18 +120,28 @@ public class MenuService {
         return mostrarMenu(ligasMenu, "Selecciona la Liga");
     }
 
-    public int mostrarEquiposByLiga(int idLiga){
+    public int mostrarEquiposByLiga(int idLiga) {
         ArrayList<Equipo> equiposLiga = new ArrayList<>(this.equipoService.getEquiposByLigaId(idLiga));
-
         ArrayList<String> equiposMenu = new ArrayList<>();
-        for(Equipo e : equiposLiga)
-        {
-            equiposMenu.add(e.getId() + ". " + e.getNombre());
+
+
+        for (Equipo e : equiposLiga) {
+            int indice = equiposLiga.indexOf(e) + 1;
+            equiposMenu.add(Converter.colorToAANSI(e.getPrimario()) + indice + ". " + e.getNombre() + Converter.ANSI_RESET);
         }
-        equiposMenu.add(equiposMenu.size()+1 + ". volver atrás");
+        equiposMenu.add((equiposLiga.size() + 1) + ". Volver atrás");
 
-        return mostrarMenu(equiposMenu, "Seleccione el Equipo");
+        int opcEquipo = mostrarMenu(equiposMenu, "Seleccione el Equipo");
+        int idEquipo = 0;
 
+
+        if (opcEquipo < equiposLiga.size() + 1) {
+            idEquipo = equiposLiga.get(opcEquipo - 1).getId();
+        }else {
+            idEquipo = -1;
+        }
+
+        return idEquipo;
     }
 
     public int mostrarJugadoresByEquipoId(int idEquipo){
