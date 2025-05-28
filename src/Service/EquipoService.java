@@ -29,6 +29,26 @@ public class EquipoService {
         return equipoRepo.findById(idEquipo);
     }
 
+    public int getVictorias(int idEquipo){
+        return equipoRepo.getVictoriasEquipo(idEquipo);
+    }
+
+    public int getDerrotas(int idEquipo){
+        return equipoRepo.getDerrotasEquipo(idEquipo);
+    }
+
+    public int getEmpates(int idEquipo){
+        return equipoRepo.getEmpatesEquipo(idEquipo);
+    }
+
+    public int getGetGolesAFavor(int idEquipo){
+        return equipoRepo.getGolesAFavor(idEquipo);
+    }
+
+    public int getGetGolesEnContra(int idEquipo){
+        return equipoRepo.getGolesEnContra(idEquipo);
+    }
+
     public void saveUpdateEquipo(Equipo e){
         equipoRepo.save(e);
     }
@@ -43,6 +63,16 @@ public class EquipoService {
     {
         Equipo equipo = Lector.createEquipo();
         return equipo;
+    }
+
+    public int calculaPuntos(int idEquipo){
+        int victorias = getVictorias(idEquipo);
+        int empates = getEmpates(idEquipo);
+        return (victorias * 3) + (empates * 1);
+    }
+
+    public int calculaDiferencia(int idEquipo){
+        return getGetGolesAFavor(idEquipo) - getGetGolesEnContra(idEquipo);
     }
 
 

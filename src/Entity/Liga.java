@@ -11,12 +11,10 @@ public class Liga {
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
 
-    private Set<Equipo> equiposSorted = new TreeSet<>();
+    private Set<Equipo> equiposSorted;
     private Map<Integer, Equipo> equiposfind = new HashMap();
 
     private List<Jornada> jornadas = new ArrayList<>();
-
-    // Constructor de copia
 
 
     public Liga(int id, String nombre, LocalDate fechaInicio, LocalDate fechaFin) {
@@ -25,9 +23,8 @@ public class Liga {
         this.nombre = nombre;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
+        this.equiposSorted = new TreeSet<>(new ClasificacionEquipoComparator());
     }
-
-    // Getters y Setters
 
 
     public int getId() {
@@ -87,15 +84,16 @@ public class Liga {
         this.equiposfind = equiposfind;
     }
 
-    // Metodos propios de la clase
 
     public void addEquipo(Equipo equipo)
     {
-        if(equipo.getLiga() != null) {
-            equipo.getLiga().removeEquipo(equipo); // solo elimina el equipo si este ya trae una liga dentro (update)
-         }
+        if(equipo.getLiga() != null && equipo.getLiga() != this) {
+            equipo.getLiga().removeEquipo(equipo);
+        }
+        this.equiposSorted.remove(equipo);
         this.equiposSorted.add(equipo);
         this.equiposfind.put(equipo.getId(), equipo);
+
         equipo.setLiga(this);
     }
 
@@ -103,7 +101,7 @@ public class Liga {
     {
         for(Equipo e : equipos)
         {
-            if(e.getLiga() != null){
+            if(e.getLiga() != null && e.getLiga() != this){
                 e.getLiga().removeEquipo(e);
             }
             this.equiposSorted.add(e);
@@ -121,7 +119,7 @@ public class Liga {
     public void addJornada(Jornada j)
     {
         if(j.getLiga() != null) {
-            j.getLiga().removeJornada(j); // solo elimina el equipo si este ya trae una liga dentro (update)
+            j.getLiga().removeJornada(j);
         }
 
         this.jornadas.add(j);
@@ -132,9 +130,6 @@ public class Liga {
     {
         this.jornadas.remove(j);
     }
-
-
-    // Metodos override
 
 
     @Override

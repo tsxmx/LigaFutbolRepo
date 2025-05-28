@@ -1,11 +1,12 @@
 package View;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
 
-    public static int mostrarMenu(ArrayList<String> opciones, String mensaje) { // añadir array de opc validas
+    public static int mostrarMenu(List<String> opciones, String mensaje) { // añadir array de opc validas
 
         Scanner lector = Lector.getLector();
         String opc = "";

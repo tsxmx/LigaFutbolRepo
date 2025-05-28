@@ -1,7 +1,9 @@
 package Service;
 
+import Entity.Equipo;
 import Entity.Jornada;
 import Entity.Liga;
+import Repository.EquipoRepository;
 import Repository.LigaRepository;
 
 import java.time.LocalDate;
@@ -10,10 +12,12 @@ import java.util.List;
 public class LigaService {
 
     private final LigaRepository ligaRepository;
+    private final EquipoService equipoService;
 
     public LigaService()
     {
         this.ligaRepository = new LigaRepository();
+        this.equipoService = new EquipoService();
     }
 
 
@@ -44,6 +48,29 @@ public class LigaService {
 
         return liga.getFechaInicio().isAfter(hoy) ? 1 : 2;
     }
+
+    public Liga getClasificacion(Liga liga){
+        List<Equipo> equiposClasi = equipoService.getEquiposByLigaId(liga.getId());
+
+        for(Equipo equipo : equiposClasi){
+
+            int idEquipo = equipo.getId();
+
+            equipo.setPuntos(equipoService.calculaPuntos(idEquipo));
+
+            int golesAFavor = equipoService.getGetGolesAFavor(idEquipo);
+            equipo.setGolesFavor(golesAFavor);
+
+            int golesEnContra = equipoService.getGetGolesEnContra(idEquipo);
+            equipo.setGolesContra(golesEnContra);
+
+            equipo.setDiferenciaGoles(golesAFavor - golesEnContra);
+
+            liga.addEquipo(equipo);
+        }
+        return liga;
+    }
+
 
 
 

@@ -18,4 +18,8 @@ public class Mensaje {
         System.out.println("EQUIPO ELIMINADO CORRECTAMENTE !");
     }
 
+    public static void genericToString(Object o){
+        System.out.println(o);
+    }
+
 }

@@ -3,8 +3,9 @@ import Entity.*;
 import Helper.Converter;
 import View.*;
 
-import java.lang.reflect.Array;
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import static View.Menu.mostrarMenu;
@@ -37,10 +38,10 @@ public class MenuService {
     public int menuPreLiga(){
         ArrayList<String> listaOpciones = new ArrayList<>();
 
-        listaOpciones.add("1. Crear Equipo");
-        listaOpciones.add("2. Eliminar Equipo");
-        listaOpciones.add("3. Añadir Jugador");
-        listaOpciones.add("4. Eliminar jugador");
+        listaOpciones.add("1. Crear Equipo"); // done
+        listaOpciones.add("2. Eliminar Equipo"); // done
+        listaOpciones.add("3. Añadir Jugador"); // done
+        listaOpciones.add("4. Eliminar jugador"); // done
         listaOpciones.add("5. Ver Equipos");
         listaOpciones.add("6. Ver Jugadores");
         listaOpciones.add("7. Datos Liga");
@@ -62,6 +63,12 @@ public class MenuService {
         listaOpciones.add("8. Salir del programa");
 
         return mostrarMenu(listaOpciones, "Menú Principal"); // return de la opcion
+    }
+
+    public void mostrarDatosLiga(Liga l){
+        clear();
+        Mensaje.genericToString(l);
+        stop();
     }
 
     public int menuAddJugador1(){
@@ -120,7 +127,7 @@ public class MenuService {
         return mostrarMenu(ligasMenu, "Selecciona la Liga");
     }
 
-    public int mostrarEquiposByLiga(int idLiga) {
+    public int mostrarEquiposByLiga(int idLiga, String message) {
         ArrayList<Equipo> equiposLiga = new ArrayList<>(this.equipoService.getEquiposByLigaId(idLiga));
         ArrayList<String> equiposMenu = new ArrayList<>();
 
@@ -131,7 +138,7 @@ public class MenuService {
         }
         equiposMenu.add((equiposLiga.size() + 1) + ". Volver atrás");
 
-        int opcEquipo = mostrarMenu(equiposMenu, "Seleccione el Equipo");
+        int opcEquipo = mostrarMenu(equiposMenu, message);
         int idEquipo = 0;
 
 
@@ -144,18 +151,26 @@ public class MenuService {
         return idEquipo;
     }
 
-    public int mostrarJugadoresByEquipoId(int idEquipo){
+    public int mostrarJugadoresByEquipoId(int idEquipo) {
         ArrayList<Jugador> jugadoresEquipo = new ArrayList<>(this.equipoService.getJugadoresByEquipoId(idEquipo));
-
         ArrayList<String> jugadoresMenu = new ArrayList<>();
-        for(Jugador j : jugadoresEquipo)
-        {
+
+        for (Jugador j : jugadoresEquipo) {
             int indice = jugadoresEquipo.indexOf(j) + 1;
             jugadoresMenu.add(indice + ". " + j.getNombre());
         }
-        jugadoresMenu.add(jugadoresMenu.size()+1 + ". volver atrás");
+        jugadoresMenu.add((jugadoresEquipo.size() + 1) + ". Volver atrás");
 
-        return mostrarMenu(jugadoresMenu, "Seleccione el Jugador");
+        int opcJugador = mostrarMenu(jugadoresMenu, "Seleccione el Jugador");
+        int idJugador = 0;
+
+        if (opcJugador < jugadoresEquipo.size() + 1) {
+            idJugador = jugadoresEquipo.get(opcJugador - 1).getId();
+        } else {
+            idJugador = -1;
+        }
+
+        return idJugador;
     }
 
     public int mostrarJornadasByLigaId(int idLiga)
@@ -188,6 +203,17 @@ public class MenuService {
         partidosMenu.add(partidosMenu.size()+1 + ". volver atrás");
 
         return mostrarMenu(partidosMenu, "Seleccione un partido");
+    }
+
+    public int mostrarClasificacion(Liga liga){
+        liga = ligaService.getClasificacion(liga);
+
+        List<String> equiposClasificacion = new ArrayList<>();
+        for (Equipo e : liga.getEquiposSorted()){
+            equiposClasificacion.add(e.toString());
+        }
+
+        return mostrarMenu(equiposClasificacion, "CLASIFICACION");
     }
 
 }

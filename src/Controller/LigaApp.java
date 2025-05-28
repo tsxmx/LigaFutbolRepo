@@ -1,10 +1,13 @@
 package Controller;
 
 import Entity.Equipo;
+import Entity.Jugador;
 import Entity.Liga;
 import Entity.Partido;
+import Repository.JugadorRepository;
 import Repository.PartidoRepository;
 import Service.EquipoService;
+import Service.JugadorService;
 import Service.LigaService;
 import Service.MenuService;
 import View.Lector;
@@ -16,6 +19,7 @@ public class LigaApp {
     private final MenuService menuService;
     private final LigaService ligaService;
     private final EquipoService equipoService;
+    private final JugadorService jugadorservice;
     private Liga liga;
 
     public LigaApp(){
@@ -24,6 +28,7 @@ public class LigaApp {
         this.menuService = new MenuService();
         this.ligaService = new LigaService();
         this.equipoService = new EquipoService();
+        this.jugadorservice = new JugadorService();
     }
 
 
@@ -60,6 +65,32 @@ public class LigaApp {
                             eliminaEquipo();
                             break;
                         case 3:
+                            crearJugador();
+                            break;
+                        case 4:
+                            eliminaJugador();
+                            break;
+                        case 5:
+                            mostrarEquipos();
+                            break;
+                        case 6:
+                            mostrarJugadores();
+                            break;
+                        case 7:
+                            mostrarDatosLiga();
+                            break;
+                        case 8:
+                            salirMenuInterno = true;
+                            break;
+                    }
+                } else {
+                    switch (menuService.menuInLiga()){
+                        case 1:
+                            mostrarClasificacion();
+                            break;
+                        case 2:
+                            break;
+                        case 3:
                             break;
                         case 4:
                             break;
@@ -72,9 +103,7 @@ public class LigaApp {
                         case 8:
                             salirMenuInterno = true;
                             break;
-                    }
-                } else {
-                    menuService.menuInLiga();
+                    };
                 }
             } while (!salirMenuInterno);
 
@@ -90,7 +119,7 @@ public class LigaApp {
     }
 
     private void eliminaEquipo(){
-        int idEquipo = menuService.mostrarEquiposByLiga(liga.getId());
+        int idEquipo = menuService.mostrarEquiposByLiga(liga.getId(), "Seleccione el Equipo");
 
         if(idEquipo != -1){
             if(menuService.menuEliminar() == 1){
@@ -103,6 +132,63 @@ public class LigaApp {
         }
     }
 
+    private void crearJugador(){
+        Jugador jugadorNuevo = jugadorservice.crearJugador();
+
+        if(jugadorNuevo != null){
+            int idEquipo = menuService.mostrarEquiposByLiga(liga.getId(), "Seleccione el Equipo del Jugador");
+            Equipo equipoJug = equipoService.getEquipoById(idEquipo);
+
+            equipoJug.addJugador(jugadorNuevo);
+            jugadorservice.saveUpdateJugador(jugadorNuevo);
+        }
+    }
+
+    private void eliminaJugador(){
+
+        int idEquipo = menuService.mostrarEquiposByLiga(liga.getId(), "Seleccione el Equipo del Jugador");
+        if(idEquipo != -1) {
+            Equipo equipoJug = equipoService.getEquipoById(idEquipo);
+            int idJugador = menuService.mostrarJugadoresByEquipoId(equipoJug.getId());
+
+            if (idJugador != -1) {
+                if (menuService.menuEliminar() == 1) {
+
+                    menuService.clear();
+                    Jugador jugadorBorrar = jugadorservice.getJugadorById(idJugador);
+                    jugadorservice.deleteJugador(jugadorBorrar);
+                    equipoJug.removeJugador(jugadorBorrar);
+                }
+            }
+        }
+    }
+
+    private void mostrarEquipos(){
+        menuService.clear();
+        menuService.mostrarEquiposByLiga(liga.getId(), "Lista de equipos");
+    }
+
+    private void mostrarJugadores(){
+        menuService.clear();
+
+        int idEquipo = menuService.mostrarEquiposByLiga(liga.getId(), "Seleccione el Equipo");
+        if(idEquipo != -1) {
+            Equipo equipoJug = equipoService.getEquipoById(idEquipo);
+            menuService.mostrarJugadoresByEquipoId(equipoJug.getId());
+        }
+    }
+
+
+    private void mostrarDatosLiga(){
+        menuService.mostrarDatosLiga(liga);
+    }
+
+    // METODOS DEL MENU PARA LA LIGA EMPEZADA
+
+    private void mostrarClasificacion(){
+        menuService.clear();
+        menuService.mostrarClasificacion(liga);
+    }
 
 
 }

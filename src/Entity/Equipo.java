@@ -1,5 +1,7 @@
 package Entity;
 
+import Helper.Converter;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,11 @@ public class Equipo implements Comparable<Equipo> {
     private double cuota;
     private LocalDate fechaCreacion;
     private Liga liga;
+
+    private int puntos;
+    private int diferenciaGoles;
+    private int golesFavor;
+    private int golesContra;
 
     private List<Jugador> plantilla = new ArrayList<>();
 
@@ -31,6 +38,11 @@ public class Equipo implements Comparable<Equipo> {
         this.fechaCreacion = fechaCreacion;
         this.liga = liga;
         this.plantilla = new ArrayList<>();
+
+        this.puntos = 0;
+        this.diferenciaGoles = 0;
+        this.golesFavor = 0;
+        this.golesContra = 0;
     }
 
     // Getters & Setters
@@ -108,6 +120,38 @@ public class Equipo implements Comparable<Equipo> {
         this.plantilla = plantilla;
     }
 
+    public int getPuntos() {
+        return puntos;
+    }
+
+    public void setPuntos(int puntos) {
+        this.puntos = puntos;
+    }
+
+    public int getDiferenciaGoles() {
+        return diferenciaGoles;
+    }
+
+    public void setDiferenciaGoles(int diferenciaGoles) {
+        this.diferenciaGoles = diferenciaGoles;
+    }
+
+    public int getGolesFavor() {
+        return golesFavor;
+    }
+
+    public void setGolesFavor(int golesFavor) {
+        this.golesFavor = golesFavor;
+    }
+
+    public int getGolesContra() {
+        return golesContra;
+    }
+
+    public void setGolesContra(int golesContra) {
+        this.golesContra = golesContra;
+    }
+
     public void addJugador(Jugador jug)
     {
         if(jug.getEquipo() != null)
@@ -133,4 +177,10 @@ public class Equipo implements Comparable<Equipo> {
     public int compareTo(Equipo e) {
         return Integer.compare(this.id, e.getId()); // comparacion de IDs
     }
+
+    @Override
+    public String toString() {
+        return Converter.colorToAANSI(getPrimario()) + getNombre() + " - " + getPuntos() + Converter.ANSI_RESET;
+    }
 }
+

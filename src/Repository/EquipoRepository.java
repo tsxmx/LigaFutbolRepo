@@ -281,6 +281,125 @@ public class EquipoRepository implements Repository<Equipo> {
         }
         return equiposReturn;
     }
+
+
+    public int getVictoriasEquipo(int idEquipo) {
+        int totalVictorias = 0;
+        try {
+            Connection con = getConnection();
+
+            String query = "SELECT COUNT(*) AS total_victorias " +
+                            "FROM Partido p " +
+                            "WHERE (p.Equipo_idLocal = ? AND p.GOLES_LOCAL > p.GOLES_VISITANTE) " +
+                            "   OR (p.Equipo_idVisitante = ? AND p.GOLES_VISITANTE > p.GOLES_LOCAL);";
+
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, idEquipo);
+            pstmt.setInt(2, idEquipo);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                totalVictorias = rs.getInt("total_victorias");
+            }
+        } catch (SQLException e) {
+            // Envuelve la SQLException en una RuntimeException para una gestión más sencilla
+            throw new RuntimeException("Error al calcular victorias para el equipo ID " + idEquipo + ": " + e.getMessage(), e);
+        }
+        return totalVictorias;
+    }
+
+    public int getDerrotasEquipo(int idEquipo) {
+        int totalDerrotas = 0;
+        try {
+            Connection con = getConnection();
+
+            String query = "SELECT COUNT(*) AS total_derrotas " +
+                            "FROM Partido p " +
+                            "WHERE (p.Equipo_idLocal = ? AND p.GOLES_LOCAL < p.GOLES_VISITANTE) " +
+                            "   OR (p.Equipo_idVisitante = ? AND p.GOLES_VISITANTE < p.GOLES_LOCAL);";
+
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, idEquipo);
+            pstmt.setInt(2, idEquipo);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                totalDerrotas = rs.getInt("total_derrotas");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al calcular derrotas para el equipo ID " + idEquipo + ": " + e.getMessage(), e);
+        }
+        return totalDerrotas;
+    }
+
+    public int getEmpatesEquipo(int idEquipo) {
+        int totalEmpates = 0;
+        try {
+            Connection con = getConnection();
+
+            String query = "SELECT COUNT(*) AS total_empates " +
+                            "FROM Partido p " +
+                            "WHERE (p.Equipo_idLocal = ? OR p.Equipo_idVisitante = ?) " +
+                            "  AND p.GOLES_LOCAL = p.GOLES_VISITANTE;";
+
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, idEquipo);
+            pstmt.setInt(2, idEquipo);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                totalEmpates = rs.getInt("total_empates");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al calcular empates para el equipo ID " + idEquipo + ": " + e.getMessage(), e);
+        }
+        return totalEmpates;
+    }
+
+    public int getGolesAFavor(int idEquipo) {
+        int golesAFavor = 0;
+        try {
+            Connection con = getConnection();
+            String query = "SELECT COALESCE(SUM(CASE WHEN p.Equipo_idLocal = ? THEN p.GOLES_LOCAL ELSE p.GOLES_VISITANTE END), 0) AS goles_a_favor " +
+                            "FROM Partido p " +
+                            "WHERE p.Equipo_idLocal = ? OR p.Equipo_idVisitante = ?;";
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, idEquipo);
+            pstmt.setInt(2, idEquipo);
+            pstmt.setInt(3, idEquipo);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                golesAFavor = rs.getInt("goles_a_favor");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al calcular goles a favor para el equipo ID " + idEquipo + ": " + e.getMessage(), e);
+        }
+        return golesAFavor;
+    }
+
+    public int getGolesEnContra(int idEquipo) {
+        int golesEnContra = 0;
+        try {
+            Connection con = getConnection();
+            String query = "SELECT COALESCE(SUM(CASE WHEN p.Equipo_idLocal = ? THEN p.GOLES_VISITANTE ELSE p.GOLES_LOCAL END), 0) AS goles_en_contra " +
+                            "FROM Partido p " +
+                            "WHERE p.Equipo_idLocal = ? OR p.Equipo_idVisitante = ?;";
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, idEquipo);
+            pstmt.setInt(2, idEquipo);
+            pstmt.setInt(3, idEquipo);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                golesEnContra = rs.getInt("goles_en_contra");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al calcular goles en contra para el equipo ID " + idEquipo + ": " + e.getMessage(), e);
+        }
+        return golesEnContra;
+    }
     
 
     /**
