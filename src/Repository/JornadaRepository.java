@@ -205,10 +205,6 @@ public class JornadaRepository implements Repository<Jornada>{
 
                 Mensaje.saveMessage();
 
-                generatedKeys.close();
-                pstmt.close();
-                con.close();
-
             }else{ // Si el ID no es 0, es un registro existente (UPDATE)
                 query = "UPDATE Jornada SET fecha_inicio = ?, fecha_fin = ?, liga_id = ? " +
                         "WHERE ID = ?";

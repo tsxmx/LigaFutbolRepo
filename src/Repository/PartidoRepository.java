@@ -187,10 +187,6 @@ public class PartidoRepository implements Repository<Partido> {
 
                 Mensaje.saveMessage();
 
-                generatedKeys.close();
-                pstmt.close();
-                con.close();
-
             }else{ // Si el ID no es 0, es un registro existente (UPDATE)
                 query = "UPDATE Partido SET goles_Local = ?, goles_Visitante = ?, fecha_inicio = ?, jornada_id = ?, Equipo_idVisitante = ?, Equipo_idLocal = ? " +
                         "WHERE id = ?";

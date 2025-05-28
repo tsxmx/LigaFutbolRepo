@@ -17,4 +17,8 @@ public class JornadaService {
     public List<Partido> getPartidosByJornadaId(int jornadaId){
         return jornadaRepo.findPartidosByJornadaId(jornadaId);
     }
+
+    public void saveUpdate(Jornada jornada){
+        jornadaRepo.save(jornada);
+    }
 }
