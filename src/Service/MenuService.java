@@ -5,6 +5,7 @@ import View.*;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import static View.Menu.mostrarMenu;
 
@@ -19,6 +20,18 @@ public class MenuService {
         this.ligaService = new LigaService();
         this.jornadaService = new JornadaService();
         this.equipoService = new EquipoService();
+    }
+
+    public void clear()
+    {
+        System.out.println("\n".repeat(35));
+    }
+
+    public void stop()
+    {
+        Scanner s = Lector.getLector();
+        System.out.println("\n ** Pulse la tecla enter para continuar ** \n");
+        s.nextLine();
     }
 
     public int menuPreLiga(){
@@ -43,7 +56,10 @@ public class MenuService {
         listaOpciones.add("2. Narrar Partido (Registro)");
         listaOpciones.add("3. Jornadas totales");
         listaOpciones.add("4. Detalles partido");
-        listaOpciones.add("5. Salir del programa");
+        listaOpciones.add("5. Maximos Goleadores");
+        listaOpciones.add("6. Rendimiento de un Equipo");
+        listaOpciones.add("7. Ganancias de los Jugadores");
+        listaOpciones.add("8. Salir del programa");
 
         return mostrarMenu(listaOpciones, "Menú Principal"); // return de la opcion
     }
@@ -88,6 +104,8 @@ public class MenuService {
         {
             ligasMenu.add(l.getId() + ". " + l.getNombre());
         }
+
+        ligasMenu.add(ligasMenu.size()+1 + ". Crear nueva liga");
         ligasMenu.add(ligasMenu.size()+1 + ". salir del programa");
 
         return mostrarMenu(ligasMenu, "Selecciona la Liga");
