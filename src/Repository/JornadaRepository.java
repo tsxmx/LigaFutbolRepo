@@ -6,6 +6,7 @@ import Entity.Liga;
 import Entity.Partido;
 import Helper.Converter;
 import Util.DBC;
+import View.Mensaje;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -179,16 +180,51 @@ public class JornadaRepository implements Repository<Jornada>{
      * @param object
      */
     @Override
-    public void save(Jornada object) {
+    public void save(Jornada jornada) { // Cambiamos 'object' por 'jornada' para mayor claridad
 
-    }
+        try{
+            Connection con = getConnection();
+            String query;
+            PreparedStatement pstmt = null;
 
-    /**
-     * @param object
-     */
-    @Override
-    public void update(Jornada object) {
+            if(jornada.getId() == 0){ // Si el ID es 0, es un nuevo registro (INSERT)
+                query = "INSERT INTO Jornada(fecha_inicio, fecha_fin, liga_id) " +
+                        "VALUES(?, ?, ?)";
 
+                pstmt = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
+
+                pstmt.setObject(1, jornada.getFechaInicio());
+                pstmt.setObject(2, jornada.getFechaFin());
+                pstmt.setInt(3, jornada.getLiga().getId()); // Asumiendo que Liga tiene un getId()
+                pstmt.executeUpdate();
+
+                ResultSet generatedKeys = pstmt.getGeneratedKeys();
+                if(generatedKeys.next()) {
+                    jornada.setId(generatedKeys.getInt(1)); // Asignamos el ID generado al objeto Jornada
+                }
+
+                Mensaje.saveMessage();
+
+                generatedKeys.close();
+                pstmt.close();
+                con.close();
+
+            }else{ // Si el ID no es 0, es un registro existente (UPDATE)
+                query = "UPDATE Jornada SET fecha_inicio = ?, fecha_fin = ?, liga_id = ? " +
+                        "WHERE ID = ?";
+                pstmt = con.prepareStatement(query);
+
+                pstmt.setObject(1, jornada.getFechaInicio());
+                pstmt.setObject(2, jornada.getFechaFin());
+                pstmt.setInt(3, jornada.getLiga().getId());
+                pstmt.setInt(4, jornada.getId());
+                pstmt.executeUpdate();
+
+                Mensaje.updateMessage();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -196,7 +232,16 @@ public class JornadaRepository implements Repository<Jornada>{
      */
     @Override
     public void delete(int id) {
-
+        try {
+            Connection con = getConnection();
+            String query = "DELETE FROM Jornada WHERE ID = ?";
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+            Mensaje.deleteMessage();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

@@ -3,6 +3,7 @@ package Repository;
 import Entity.*;
 import Helper.Converter;
 import Util.DBC;
+import View.Mensaje;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -158,16 +159,57 @@ public class PartidoRepository implements Repository<Partido> {
      * @param object
      */
     @Override
-    public void save(Partido object) {
+    public void save(Partido partido) { // Cambiamos 'object' por 'partido' para mayor claridad
 
-    }
+        try{
+            Connection con = getConnection();
+            String query;
+            PreparedStatement pstmt = null;
 
-    /**
-     * @param object
-     */
-    @Override
-    public void update(Partido object) {
+            if(partido.getId() == 0){ // Si el ID es 0, es un nuevo registro (INSERT)
+                query = "INSERT INTO Partido(goles_Local, goles_Visitante, fecha_inicio, jornada_id, Equipo_idVisitante, Equipo_idLocal) " +
+                        "VALUES(?, ?, ?, ?, ?, ?)";
 
+                pstmt = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
+
+                pstmt.setInt(1, partido.getGolesLocal());
+                pstmt.setInt(2, partido.getGolesVisitante());
+                pstmt.setObject(3, partido.getFechaInicio());
+                pstmt.setInt(4, partido.getJornada().getId()); // Asumiendo que Jornada tiene un getId()
+                pstmt.setInt(5, partido.getVisitante().getId()); // Asumiendo que Equipo tiene un getId()
+                pstmt.setInt(6, partido.getLocal().getId()); // Asumiendo que Equipo tiene un getId()
+                pstmt.executeUpdate();
+
+                ResultSet generatedKeys = pstmt.getGeneratedKeys();
+                if(generatedKeys.next()) {
+                    partido.setId(generatedKeys.getInt(1)); // Asignamos el ID generado al objeto Partido
+                }
+
+                Mensaje.saveMessage();
+
+                generatedKeys.close();
+                pstmt.close();
+                con.close();
+
+            }else{ // Si el ID no es 0, es un registro existente (UPDATE)
+                query = "UPDATE Partido SET goles_Local = ?, goles_Visitante = ?, fecha_inicio = ?, jornada_id = ?, Equipo_idVisitante = ?, Equipo_idLocal = ? " +
+                        "WHERE id = ?";
+                pstmt = con.prepareStatement(query);
+
+                pstmt.setInt(1, partido.getGolesLocal());
+                pstmt.setInt(2, partido.getGolesVisitante());
+                pstmt.setObject(3, partido.getFechaInicio());
+                pstmt.setInt(4, partido.getJornada().getId());
+                pstmt.setInt(5, partido.getVisitante().getId());
+                pstmt.setInt(6, partido.getLocal().getId());
+                pstmt.setInt(7, partido.getId());
+                pstmt.executeUpdate();
+
+                Mensaje.updateMessage();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -175,6 +217,15 @@ public class PartidoRepository implements Repository<Partido> {
      */
     @Override
     public void delete(int id) {
-
+        try {
+            Connection con = getConnection();
+            String query = "DELETE FROM Partido WHERE id = ?";
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+            Mensaje.deleteMessage();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

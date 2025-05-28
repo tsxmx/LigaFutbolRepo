@@ -6,6 +6,7 @@ import Entity.Jornada;
 import Entity.Liga;
 import Helper.Converter;
 import Util.DBC;
+import View.Mensaje;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -222,18 +223,50 @@ public class LigaRepository implements Repository<Liga>{
      * @param object
      */
     @Override
-    public void save(Liga object) {
+    public void save(Liga liga) { // Cambiamos 'object' por 'liga' para mayor claridad
+        try{
+            Connection con = getConnection();
+            String query;
+            PreparedStatement pstmt = null;
 
-    }
+            if(liga.getId() == 0){ // Si el ID es 0, es un nuevo registro (INSERT)
+                query = "INSERT INTO Liga(nombre, fecha_inicio, fecha_fin) " +
+                        "VALUES(?, ?, ?)";
 
-    // UPDATE
+                pstmt = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
 
-    /**
-     * @param object
-     */
-    @Override
-    public void update(Liga object) {
+                pstmt.setString(1, liga.getNombre());
+                pstmt.setObject(2, liga.getFechaInicio());
+                pstmt.setObject(3, liga.getFechaFin());
+                pstmt.executeUpdate();
 
+                ResultSet generatedKeys = pstmt.getGeneratedKeys();
+                if(generatedKeys.next()) {
+                    liga.setId(generatedKeys.getInt(1)); // Asignamos el ID generado al objeto Liga
+                }
+
+                Mensaje.saveMessage();
+
+                generatedKeys.close();
+                pstmt.close();
+                con.close();
+
+            }else{ // Si el ID no es 0, es un registro existente (UPDATE)
+                query = "UPDATE Liga SET nombre = ?, fecha_inicio = ?, fecha_fin = ? " +
+                        "WHERE ID = ?";
+                pstmt = con.prepareStatement(query);
+
+                pstmt.setString(1, liga.getNombre());
+                pstmt.setObject(2, liga.getFechaInicio());
+                pstmt.setObject(3, liga.getFechaFin());
+                pstmt.setInt(4, liga.getId());
+                pstmt.executeUpdate();
+
+                Mensaje.updateMessage();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // DELETE
@@ -243,6 +276,15 @@ public class LigaRepository implements Repository<Liga>{
      */
     @Override
     public void delete(int id) {
-
+        try {
+            Connection con = getConnection();
+            String query = "DELETE FROM Liga WHERE ID = ?";
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+            Mensaje.deleteMessage();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

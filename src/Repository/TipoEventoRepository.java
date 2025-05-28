@@ -4,6 +4,7 @@ import Entity.Jugador;
 import Entity.Partido;
 import Entity.TipoEvento;
 import Util.DBC;
+import View.Mensaje;
 import com.mysql.cj.xdevapi.PreparableStatement;
 
 import java.sql.Connection;
@@ -130,16 +131,46 @@ public class TipoEventoRepository implements Repository<TipoEvento> {
      * @param object
      */
     @Override
-    public void save(TipoEvento object) {
+    public void save(TipoEvento tipoEvento) { // Cambiamos 'object' por 'tipoEvento' para mayor claridad
+        try{
+            Connection con = getConnection();
+            String query;
+            PreparedStatement pstmt = null;
 
-    }
+            if(tipoEvento.getId() == 0){ // Si el ID es 0, es un nuevo registro (INSERT)
+                query = "INSERT INTO TipoEvento(nombre) " +
+                        "VALUES(?)";
 
-    /**
-     * @param object
-     */
-    @Override
-    public void update(TipoEvento object) {
+                pstmt = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
 
+                pstmt.setString(1, tipoEvento.getNombre());
+                pstmt.executeUpdate();
+
+                ResultSet generatedKeys = pstmt.getGeneratedKeys();
+                if(generatedKeys.next()) {
+                    tipoEvento.setId(generatedKeys.getInt(1)); // Asignamos el ID generado al objeto TipoEvento
+                }
+
+                Mensaje.saveMessage();
+
+                generatedKeys.close();
+                pstmt.close();
+                con.close();
+
+            }else{ // Si el ID no es 0, es un registro existente (UPDATE)
+                query = "UPDATE TipoEvento SET nombre = ? " +
+                        "WHERE idtable2 = ?"; // Asumiendo que la columna ID es 'idtable2'
+                pstmt = con.prepareStatement(query);
+
+                pstmt.setString(1, tipoEvento.getNombre());
+                pstmt.setInt(2, tipoEvento.getId());
+                pstmt.executeUpdate();
+
+                Mensaje.updateMessage();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -147,6 +178,15 @@ public class TipoEventoRepository implements Repository<TipoEvento> {
      */
     @Override
     public void delete(int id) {
-
+        try {
+            Connection con = getConnection();
+            String query = "DELETE FROM TipoEvento WHERE idtable2 = ?";
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+            Mensaje.deleteMessage();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

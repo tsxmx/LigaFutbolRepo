@@ -3,12 +3,14 @@ package Repository;
 import Entity.*;
 import Helper.Converter;
 import Util.DBC;
+import View.Mensaje;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -285,16 +287,59 @@ public class EquipoRepository implements Repository<Equipo> {
      * @param object
      */
     @Override
-    public void save(Equipo object) {
+    public void save(Equipo equipo) {
 
-    }
+        try{
+            Connection con = getConnection();
+            String query;
+            PreparedStatement pstmt = null;
 
-    /**
-     * @param object
-     */
-    @Override
-    public void update(Equipo object) {
+            if(equipo.getId() == 0){
+                query = "INSERT INTO Equipo(nombre, estadio, color_primario, color_secundario, cuota, fecha_creacion, liga_id) " +
+                        "VALUES(?, ?, ?, ?, ?, ?, ?)";
 
+                pstmt = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
+
+                pstmt.setString(1, equipo.getNombre());
+                pstmt.setString(2, equipo.getEstadio());
+                pstmt.setString(3, equipo.getPrimario().toString());
+                pstmt.setString(4, equipo.getSecundario().toString());
+                pstmt.setDouble(5, equipo.getCuota());
+                pstmt.setObject(6, equipo.getFechaCreacion());
+                pstmt.setInt(7, equipo.getLiga().getId());
+                pstmt.executeUpdate();
+
+                ResultSet generatedKeys = pstmt.getGeneratedKeys();
+                if(generatedKeys.next()) {
+                    equipo.setId(generatedKeys.getInt(1));
+                }
+
+                Mensaje.saveMessage();
+
+                generatedKeys.close();
+                pstmt.close();
+                con.close();
+
+            }else{
+                query = "UPDATE Equipo SET nombre = ?, estadio = ?, color_primario = ?, color_secundario = ?, cuota = ?, fecha_creacion = ?, liga_id = ? " +
+                        "WHERE idEquipo = ?";
+                pstmt = con.prepareStatement(query);
+
+                pstmt.setString(1, equipo.getNombre());
+                pstmt.setString(2, equipo.getEstadio());
+                pstmt.setString(3, equipo.getPrimario().toString());
+                pstmt.setString(4, equipo.getSecundario().toString());
+                pstmt.setDouble(5, equipo.getCuota());
+                pstmt.setObject(6, equipo.getFechaCreacion());
+                pstmt.setInt(7, equipo.getLiga().getId());
+                pstmt.setInt(8, equipo.getId());
+                pstmt.executeUpdate();
+
+                Mensaje.updateMessage();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -302,6 +347,15 @@ public class EquipoRepository implements Repository<Equipo> {
      */
     @Override
     public void delete(int id) {
-
+        try {
+            Connection con = getConnection();
+            String query = "DELETE FROM Equipo WHERE idEquipo = ?";
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+            Mensaje.deleteMessage();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

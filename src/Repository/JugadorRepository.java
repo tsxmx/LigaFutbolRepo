@@ -3,6 +3,7 @@ package Repository;
 import Entity.*;
 import Helper.Converter;
 import Util.DBC;
+import View.Mensaje;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -220,16 +221,58 @@ public class JugadorRepository implements Repository<Jugador> {
      * @param object
      */
     @Override
-    public void save(Jugador object) {
+    public void save(Jugador jugador) { // Cambiamos 'object' por 'jugador' para mayor claridad
+        try{
+            Connection con = getConnection();
+            String query;
+            PreparedStatement pstmt = null;
 
-    }
+            if(jugador.getId() == 0){ // Si el ID es 0, es un nuevo registro (INSERT)
+                query = "INSERT INTO Jugador(nombre, fecha_nacimiento, nacionalidad, dorsal, pro, Equipo_idEquipo, posicion) " +
+                        "VALUES(?, ?, ?, ?, ?, ?, ?)";
 
-    /**
-     * @param object
-     */
-    @Override
-    public void update(Jugador object) {
+                pstmt = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
 
+                pstmt.setString(1, jugador.getNombre());
+                pstmt.setObject(2, jugador.getFechaNacimiento());
+                pstmt.setString(3, jugador.getNacionalidad().toString()); // Asumiendo que Nacionalidad es un Enum
+                pstmt.setInt(4, jugador.getDorsal());
+                pstmt.setInt(5, (jugador instanceof JugadorPayable) ? 1 : 0); // Guardamos 1 si es JugadorPayable, 0 si es Jugador normal
+                pstmt.setInt(6, jugador.getEquipo().getId()); // Asumiendo que Equipo tiene un getId()
+                pstmt.setString(7, jugador.getPosicion().toString()); // Asumiendo que Posicion es un Enum
+                pstmt.executeUpdate();
+
+                ResultSet generatedKeys = pstmt.getGeneratedKeys();
+                if(generatedKeys.next()) {
+                    jugador.setId(generatedKeys.getInt(1)); // Asignamos el ID generado al objeto Jugador
+                }
+
+                Mensaje.saveMessage();
+
+                generatedKeys.close();
+                pstmt.close();
+                con.close();
+
+            }else{ // Si el ID no es 0, es un registro existente (UPDATE)
+                query = "UPDATE Jugador SET nombre = ?, fecha_nacimiento = ?, nacionalidad = ?, dorsal = ?, pro = ?, Equipo_idEquipo = ?, posicion = ? " +
+                        "WHERE idJugador = ?";
+                pstmt = con.prepareStatement(query);
+
+                pstmt.setString(1, jugador.getNombre());
+                pstmt.setObject(2, jugador.getFechaNacimiento());
+                pstmt.setString(3, jugador.getNacionalidad().toString());
+                pstmt.setInt(4, jugador.getDorsal());
+                pstmt.setInt(5, (jugador instanceof JugadorPayable) ? 1 : 0);
+                pstmt.setInt(6, jugador.getEquipo().getId());
+                pstmt.setString(7, jugador.getPosicion().toString());
+                pstmt.setInt(8, jugador.getId());
+                pstmt.executeUpdate();
+
+                Mensaje.updateMessage();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -237,6 +280,15 @@ public class JugadorRepository implements Repository<Jugador> {
      */
     @Override
     public void delete(int id) {
-
+        try {
+            Connection con = getConnection();
+            String query = "DELETE FROM Jugador WHERE idJugador = ?";
+            PreparedStatement pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+            Mensaje.deleteMessage();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -5,6 +5,7 @@ import Entity.Jugador;
 import Entity.Partido;
 import Entity.TipoEvento;
 import Util.DBC;
+import View.Mensaje;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -85,18 +86,56 @@ public class EventoRepository implements Repository<Evento>{
     /**
      * @param object
      */
-    @Override
-    public void save(Evento object) {
+    public void save(Evento event) { // Cambiamos 'object' por 'event' para mayor claridad
 
+        try{
+            Connection con = getConnection();
+            String query;
+            PreparedStatement pstmt = null;
+
+            if(event.getId() == 0){ // Si el ID es 0, es un nuevo registro (INSERT)
+                query = "INSERT INTO Evento(minuto, jugador_idJugador, Partido_id, TipoEvento_idTipoEvento) " +
+                        "VALUES(?, ?, ?, ?)";
+
+                pstmt = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
+
+                pstmt.setInt(1, event.getMinuto());
+                pstmt.setInt(2, event.getJugador().getId()); // Asumiendo que Jugador tiene un getId()
+                pstmt.setInt(3, event.getPartido().getId()); // Asumiendo que Partido tiene un getId()
+                pstmt.setInt(4, event.getTipo().getId()); // Asumiendo que TipoEvento tiene un getId()
+                pstmt.executeUpdate();
+
+                ResultSet generatedKeys = pstmt.getGeneratedKeys();
+                if(generatedKeys.next()) {
+                    event.setId(generatedKeys.getInt(1)); // Asignamos el ID generado al objeto Evento
+                }
+
+                Mensaje.saveMessage();
+
+                generatedKeys.close();
+                pstmt.close();
+                con.close();
+
+            }else{ // Si el ID no es 0, es un registro existente (UPDATE)
+                query = "UPDATE Evento SET minuto = ?, jugador_idJugador = ?, Partido_id = ?, TipoEvento_idTipoEvento = ? " +
+                        "WHERE idEvento = ?";
+                pstmt = con.prepareStatement(query);
+
+                pstmt.setInt(1, event.getMinuto());
+                pstmt.setInt(2, event.getJugador().getId());
+                pstmt.setInt(3, event.getPartido().getId());
+                pstmt.setInt(4, event.getTipo().getId());
+                pstmt.setInt(5, event.getId());
+                pstmt.executeUpdate();
+
+                Mensaje.updateMessage();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    /**
-     * @param object
-     */
-    @Override
-    public void update(Evento object) {
 
-    }
 
     /**
      * @param id
