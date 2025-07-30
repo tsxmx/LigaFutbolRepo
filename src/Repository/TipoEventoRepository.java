@@ -131,13 +131,13 @@ public class TipoEventoRepository implements Repository<TipoEvento> {
      * @param object
      */
     @Override
-    public void save(TipoEvento tipoEvento) { // Cambiamos 'object' por 'tipoEvento' para mayor claridad
+    public void save(TipoEvento tipoEvento) {
         try{
             Connection con = getConnection();
             String query;
             PreparedStatement pstmt = null;
 
-            if(tipoEvento.getId() == 0){ // Si el ID es 0, es un nuevo registro (INSERT)
+            if(tipoEvento.getId() == 0){
                 query = "INSERT INTO TipoEvento(nombre) " +
                         "VALUES(?)";
 
@@ -148,18 +148,14 @@ public class TipoEventoRepository implements Repository<TipoEvento> {
 
                 ResultSet generatedKeys = pstmt.getGeneratedKeys();
                 if(generatedKeys.next()) {
-                    tipoEvento.setId(generatedKeys.getInt(1)); // Asignamos el ID generado al objeto TipoEvento
+                    tipoEvento.setId(generatedKeys.getInt(1));
                 }
 
                 Mensaje.saveMessage();
 
-                generatedKeys.close();
-                pstmt.close();
-                con.close();
-
-            }else{ // Si el ID no es 0, es un registro existente (UPDATE)
+            }else{
                 query = "UPDATE TipoEvento SET nombre = ? " +
-                        "WHERE idtable2 = ?"; // Asumiendo que la columna ID es 'idtable2'
+                        "WHERE idtable2 = ?";
                 pstmt = con.prepareStatement(query);
 
                 pstmt.setString(1, tipoEvento.getNombre());

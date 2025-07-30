@@ -1,8 +1,11 @@
 package Service;
 
+import Entity.Evento;
 import Entity.Jugador;
 import Repository.JugadorRepository;
 import View.Lector;
+
+import java.util.List;
 
 public class JugadorService {
 
@@ -29,6 +32,10 @@ public class JugadorService {
         jugadorRepo.delete(jug.getId());
     }
 
+    public List<Evento> getEventosByJugadorId(int idJug){
+        return jugadorRepo.findEventosByJugadorId(idJug);
+    }
+
     // Metodos de clase propios
 
     public Jugador crearJugador(){
@@ -44,6 +51,11 @@ public class JugadorService {
         }
 
         return jugadorFinal;
+    }
+
+    public double getSalario(){
+        List<Evento> eventosJug = getEventosByJugadorId(1);
+        return 0.0;
     }
 
 }

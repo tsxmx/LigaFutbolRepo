@@ -44,15 +44,21 @@ public class LigaService {
 
     // Metodos propios de la clase liga
 
-    public int getPeriodoActual(Liga liga)
-    {
-        if(liga == null) {
+    public int getPeriodoActual(Liga liga) {
+        if (liga == null) {
             throw new NullPointerException("ERROR :: El objeto liga no puede ser nulo!");
         }
 
         LocalDate hoy = LocalDate.now();
+        LocalDate fechaInicioLiga = liga.getFechaInicio();
 
-        return liga.getFechaInicio().isAfter(hoy) ? 1 : 2;
+        if (fechaInicioLiga.isAfter(hoy)) {
+            return 1;
+        } else if (fechaInicioLiga.isEqual(hoy)) {
+            return 2;
+        } else {
+            return 3;
+        }
     }
 
     public Liga getClasificacion(Liga liga){

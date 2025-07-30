@@ -177,17 +177,17 @@ public class JornadaRepository implements Repository<Jornada>{
     }
 
     /**
-     * @param object
+     *
      */
     @Override
-    public void save(Jornada jornada) { // Cambiamos 'object' por 'jornada' para mayor claridad
+    public void save(Jornada jornada) {
 
         try{
             Connection con = getConnection();
             String query;
             PreparedStatement pstmt = null;
 
-            if(jornada.getId() == 0){ // Si el ID es 0, es un nuevo registro (INSERT)
+            if(jornada.getId() == 0){
                 query = "INSERT INTO Jornada(fecha_inicio, fecha_fin, liga_id) " +
                         "VALUES(?, ?, ?)";
 
@@ -195,17 +195,17 @@ public class JornadaRepository implements Repository<Jornada>{
 
                 pstmt.setObject(1, jornada.getFechaInicio());
                 pstmt.setObject(2, jornada.getFechaFin());
-                pstmt.setInt(3, jornada.getLiga().getId()); // Asumiendo que Liga tiene un getId()
+                pstmt.setInt(3, jornada.getLiga().getId());
                 pstmt.executeUpdate();
 
                 ResultSet generatedKeys = pstmt.getGeneratedKeys();
                 if(generatedKeys.next()) {
-                    jornada.setId(generatedKeys.getInt(1)); // Asignamos el ID generado al objeto Jornada
+                    jornada.setId(generatedKeys.getInt(1));
                 }
 
                 Mensaje.saveMessage();
 
-            }else{ // Si el ID no es 0, es un registro existente (UPDATE)
+            }else{
                 query = "UPDATE Jornada SET fecha_inicio = ?, fecha_fin = ?, liga_id = ? " +
                         "WHERE ID = ?";
                 pstmt = con.prepareStatement(query);

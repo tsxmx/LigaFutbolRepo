@@ -84,39 +84,35 @@ public class EventoRepository implements Repository<Evento>{
     }
 
     /**
-     * @param object
+     *
      */
-    public void save(Evento event) { // Cambiamos 'object' por 'event' para mayor claridad
+    public void save(Evento event) {
 
         try{
             Connection con = getConnection();
             String query;
             PreparedStatement pstmt = null;
 
-            if(event.getId() == 0){ // Si el ID es 0, es un nuevo registro (INSERT)
+            if(event.getId() == 0){v
                 query = "INSERT INTO Evento(minuto, jugador_idJugador, Partido_id, TipoEvento_idTipoEvento) " +
                         "VALUES(?, ?, ?, ?)";
 
                 pstmt = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
 
                 pstmt.setInt(1, event.getMinuto());
-                pstmt.setInt(2, event.getJugador().getId()); // Asumiendo que Jugador tiene un getId()
-                pstmt.setInt(3, event.getPartido().getId()); // Asumiendo que Partido tiene un getId()
-                pstmt.setInt(4, event.getTipo().getId()); // Asumiendo que TipoEvento tiene un getId()
+                pstmt.setInt(2, event.getJugador().getId());
+                pstmt.setInt(3, event.getPartido().getId());
+                pstmt.setInt(4, event.getTipo().getId());
                 pstmt.executeUpdate();
 
                 ResultSet generatedKeys = pstmt.getGeneratedKeys();
                 if(generatedKeys.next()) {
-                    event.setId(generatedKeys.getInt(1)); // Asignamos el ID generado al objeto Evento
+                    event.setId(generatedKeys.getInt(1));
                 }
 
                 Mensaje.saveMessage();
 
-                generatedKeys.close();
-                pstmt.close();
-                con.close();
-
-            }else{ // Si el ID no es 0, es un registro existente (UPDATE)
+            }else{
                 query = "UPDATE Evento SET minuto = ?, jugador_idJugador = ?, Partido_id = ?, TipoEvento_idTipoEvento = ? " +
                         "WHERE idEvento = ?";
                 pstmt = con.prepareStatement(query);

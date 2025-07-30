@@ -435,10 +435,6 @@ public class EquipoRepository implements Repository<Equipo> {
 
                 Mensaje.saveMessage();
 
-                generatedKeys.close();
-                pstmt.close();
-                con.close();
-
             }else{
                 query = "UPDATE Equipo SET nombre = ?, estadio = ?, color_primario = ?, color_secundario = ?, cuota = ?, fecha_creacion = ?, liga_id = ? " +
                         "WHERE idEquipo = ?";

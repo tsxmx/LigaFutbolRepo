@@ -223,13 +223,13 @@ public class LigaRepository implements Repository<Liga>{
      * @param object
      */
     @Override
-    public void save(Liga liga) { // Cambiamos 'object' por 'liga' para mayor claridad
+    public void save(Liga liga) {
         try{
             Connection con = getConnection();
             String query;
             PreparedStatement pstmt = null;
 
-            if(liga.getId() == 0){ // Si el ID es 0, es un nuevo registro (INSERT)
+            if(liga.getId() == 0){
                 query = "INSERT INTO Liga(nombre, fecha_inicio, fecha_fin) " +
                         "VALUES(?, ?, ?)";
 
@@ -242,7 +242,7 @@ public class LigaRepository implements Repository<Liga>{
 
                 ResultSet generatedKeys = pstmt.getGeneratedKeys();
                 if(generatedKeys.next()) {
-                    liga.setId(generatedKeys.getInt(1)); // Asignamos el ID generado al objeto Liga
+                    liga.setId(generatedKeys.getInt(1));
                 }
 
                 Mensaje.saveMessage();
@@ -251,7 +251,7 @@ public class LigaRepository implements Repository<Liga>{
                 pstmt.close();
                 con.close();
 
-            }else{ // Si el ID no es 0, es un registro existente (UPDATE)
+            }else{
                 query = "UPDATE Liga SET nombre = ?, fecha_inicio = ?, fecha_fin = ? " +
                         "WHERE ID = ?";
                 pstmt = con.prepareStatement(query);

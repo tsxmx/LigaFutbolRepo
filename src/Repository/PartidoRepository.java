@@ -159,14 +159,14 @@ public class PartidoRepository implements Repository<Partido> {
      * @param object
      */
     @Override
-    public void save(Partido partido) { // Cambiamos 'object' por 'partido' para mayor claridad
+    public void save(Partido partido) {
 
         try{
             Connection con = getConnection();
             String query;
             PreparedStatement pstmt = null;
 
-            if(partido.getId() == 0){ // Si el ID es 0, es un nuevo registro (INSERT)
+            if(partido.getId() == 0){
                 query = "INSERT INTO Partido(goles_Local, goles_Visitante, fecha_inicio, jornada_id, Equipo_idVisitante, Equipo_idLocal) " +
                         "VALUES(?, ?, ?, ?, ?, ?)";
 
@@ -175,19 +175,19 @@ public class PartidoRepository implements Repository<Partido> {
                 pstmt.setInt(1, partido.getGolesLocal());
                 pstmt.setInt(2, partido.getGolesVisitante());
                 pstmt.setObject(3, partido.getFechaInicio());
-                pstmt.setInt(4, partido.getJornada().getId()); // Asumiendo que Jornada tiene un getId()
-                pstmt.setInt(5, partido.getVisitante().getId()); // Asumiendo que Equipo tiene un getId()
-                pstmt.setInt(6, partido.getLocal().getId()); // Asumiendo que Equipo tiene un getId()
+                pstmt.setInt(4, partido.getJornada().getId());
+                pstmt.setInt(5, partido.getVisitante().getId());
+                pstmt.setInt(6, partido.getLocal().getId());
                 pstmt.executeUpdate();
 
                 ResultSet generatedKeys = pstmt.getGeneratedKeys();
                 if(generatedKeys.next()) {
-                    partido.setId(generatedKeys.getInt(1)); // Asignamos el ID generado al objeto Partido
+                    partido.setId(generatedKeys.getInt(1));
                 }
 
                 Mensaje.saveMessage();
 
-            }else{ // Si el ID no es 0, es un registro existente (UPDATE)
+            }else{
                 query = "UPDATE Partido SET goles_Local = ?, goles_Visitante = ?, fecha_inicio = ?, jornada_id = ?, Equipo_idVisitante = ?, Equipo_idLocal = ? " +
                         "WHERE id = ?";
                 pstmt = con.prepareStatement(query);

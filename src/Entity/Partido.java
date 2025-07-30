@@ -1,10 +1,8 @@
 package Entity;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Partido {
 
@@ -15,6 +13,8 @@ public class Partido {
     private Jornada jornada;
     private Equipo local;
     private Equipo visitante;
+
+    private boolean narrado = false;
 
     private List<Evento> eventos = new ArrayList<>();
 
@@ -97,6 +97,37 @@ public class Partido {
 
     public void setEventos(List<Evento> eventos) {
         this.eventos = eventos;
+    }
+
+    public boolean getNarrado() {
+        return narrado;
+    }
+
+    public void addGoalLoc(){
+        this.golesLocal ++;
+    }
+
+    public void subsGoalLoc(){
+
+        if(getGolesLocal() > 0){
+            this.golesLocal ++;
+        }
+    }
+
+    public void addGoalVis(){
+        this.golesVisitante ++;
+    }
+
+    public void subsGoalVis(){
+
+        if(getGolesLocal() > 0){
+            this.golesVisitante ++;
+        }
+    }
+
+
+    public void setNarrado(boolean narrado) {
+        this.narrado = narrado;
     }
 
     public void addEvento(Evento event)

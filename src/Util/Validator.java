@@ -125,4 +125,12 @@ public class Validator {
             return false; // devuelve falso en caso de que salte la excepcion (lo que significa que la fecha no es valida)
         }
     }
+
+    public static boolean validaMinuto(int minuto){
+        if(minuto < 0 || minuto > 90){
+            throw new MinutoNoValido("ERROR :: El minuto del evento tiene que ser entre 0 y 90");
+        }
+
+        return true;
+    }
 }

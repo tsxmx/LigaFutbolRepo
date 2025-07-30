@@ -7,15 +7,15 @@ public class Mensaje {
     }
 
     public static void saveMessage(){
-        System.out.println("EQUIPO CREADO CORRECTAMENTE !");
+        System.out.println("GUARDADO COMPLETADO SIN PROBLEMAS");
     }
 
     public static void updateMessage(){
-        System.out.println("EQUIPO ACTUALIZADO CORRECTAMENTE !");
+        System.out.println("ACTUALIZADO REALIZADO CORRECTAMENTE");
     }
 
     public static void deleteMessage(){
-        System.out.println("EQUIPO ELIMINADO CORRECTAMENTE !");
+        System.out.println("ELIMINADO REALIZADO CORRECTAMENTE");
     }
 
     public static void genericToString(Object o){

@@ -42,8 +42,8 @@ public class Lector {
         String numero;
 
         do {
-            numero = lector.nextLine();
             System.out.println(mensaje);
+            numero = lector.nextLine();
 
             try{
                 Validator.esNumero(numero);
@@ -89,9 +89,8 @@ public class Lector {
         int numero = 0;
 
         do {
-            numero = getInt("");
-
             try {
+                numero = getInt("INTRODUCE LA OPCION");
                 Validator.numeroEnRango(minimo,maximo, numero);
                 numeroEnRango = true;
             }
@@ -104,6 +103,27 @@ public class Lector {
 
         return numero;
 
+    }
+    public static int getMinuto(String msj_entrada){
+
+        Scanner lector = Lector.getLector();
+        boolean entradaValida = true;
+        int minuto;
+
+        do {
+            minuto = getInt(msj_entrada);
+
+            try{
+                Validator.validaMinuto(minuto);
+                entradaValida = true;
+            }
+            catch (CadenaVacia | NumeroNoValido | MinutoNoValido e){
+                e.printStackTrace();
+                entradaValida = false;
+            }
+        }while(!entradaValida);
+
+        return minuto;
     }
 
 
@@ -261,6 +281,11 @@ public class Lector {
 
         return new Jugador(0, nombreJugador, fechaNacimiento, nacionalidad, posicion, dorsal, null);
 
+    }
+
+    public static Evento createEvent(){
+        int minuto = getMinuto("INTRODUCE EL MINUTO DEL EVENTO");
+        return new Evento(0, minuto, null, null, null);
     }
 
 

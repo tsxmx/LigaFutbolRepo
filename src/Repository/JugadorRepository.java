@@ -218,17 +218,48 @@ public class JugadorRepository implements Repository<Jugador> {
         return eventos;
     }
 
+
+    public List<String> findMaxGoleadores(int id)
+    {
+        List<String> maxGoleadores = new ArrayList<>();
+
+        try{
+            Connection con = getConnection();
+
+            String query = "SELECT j.nombre AS nombreJug, " +
+                                    "COUNT(e.idEvento) AS contador " +
+                            "FROM jugador AS j " +
+                            "JOIN evento AS e ON j.idJugador = e.Jugador_idJugador " +
+                            "GROUP BY j.nombre, j.idJugador " +
+                            "ORDER BY contador DESC";
+
+            PreparedStatement pstmt = con.prepareStatement(query);
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next())
+            {
+                String tuple = rs.getString("nombreJug") + " - " + rs.getInt("contador");
+                maxGoleadores.add(tuple);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return maxGoleadores;
+    }
+
     /**
      * @param object
      */
     @Override
-    public void save(Jugador jugador) { // Cambiamos 'object' por 'jugador' para mayor claridad
+    public void save(Jugador jugador) {
         try{
             Connection con = getConnection();
             String query;
             PreparedStatement pstmt = null;
 
-            if(jugador.getId() == 0){ // Si el ID es 0, es un nuevo registro (INSERT)
+            if(jugador.getId() == 0){
                 query = "INSERT INTO Jugador(nombre, fecha_nacimiento, nacionalidad, dorsal, pro, Equipo_idEquipo, posicion) " +
                         "VALUES(?, ?, ?, ?, ?, ?, ?)";
 
@@ -236,16 +267,16 @@ public class JugadorRepository implements Repository<Jugador> {
 
                 pstmt.setString(1, jugador.getNombre());
                 pstmt.setObject(2, jugador.getFechaNacimiento());
-                pstmt.setString(3, jugador.getNacionalidad().toString()); // Asumiendo que Nacionalidad es un Enum
+                pstmt.setString(3, jugador.getNacionalidad().toString());
                 pstmt.setInt(4, jugador.getDorsal());
-                pstmt.setInt(5, (jugador instanceof JugadorPayable) ? 1 : 0); // Guardamos 1 si es JugadorPayable, 0 si es Jugador normal
-                pstmt.setInt(6, jugador.getEquipo().getId()); // Asumiendo que Equipo tiene un getId()
-                pstmt.setString(7, jugador.getPosicion().toString()); // Asumiendo que Posicion es un Enum
+                pstmt.setInt(5, (jugador instanceof JugadorPayable) ? 1 : 0);
+                pstmt.setInt(6, jugador.getEquipo().getId());
+                pstmt.setString(7, jugador.getPosicion().toString());
                 pstmt.executeUpdate();
 
                 ResultSet generatedKeys = pstmt.getGeneratedKeys();
                 if(generatedKeys.next()) {
-                    jugador.setId(generatedKeys.getInt(1)); // Asignamos el ID generado al objeto Jugador
+                    jugador.setId(generatedKeys.getInt(1));
                 }
 
                 Mensaje.saveMessage();
@@ -254,7 +285,7 @@ public class JugadorRepository implements Repository<Jugador> {
                 pstmt.close();
                 con.close();
 
-            }else{ // Si el ID no es 0, es un registro existente (UPDATE)
+            }else{
                 query = "UPDATE Jugador SET nombre = ?, fecha_nacimiento = ?, nacionalidad = ?, dorsal = ?, pro = ?, Equipo_idEquipo = ?, posicion = ? " +
                         "WHERE idJugador = ?";
                 pstmt = con.prepareStatement(query);

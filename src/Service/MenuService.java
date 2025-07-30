@@ -15,12 +15,14 @@ public class MenuService {
     private final LigaService ligaService;
     private final JornadaService jornadaService;
     private final EquipoService equipoService;
+    private final TipoEventoService tipoEventoService;
 
     public MenuService()
     {
         this.ligaService = new LigaService();
         this.jornadaService = new JornadaService();
         this.equipoService = new EquipoService();
+        this.tipoEventoService = new TipoEventoService();
     }
 
     public void clear()
@@ -53,9 +55,9 @@ public class MenuService {
     public int menuInLiga(){
         ArrayList<String> listaOpciones = new ArrayList<>();
 
-        listaOpciones.add("1. Clasificacion");
-        listaOpciones.add("2. Narrar Partido (Registro)");
-        listaOpciones.add("3. Jornadas totales");
+        listaOpciones.add("1. Clasificacion"); // done
+        listaOpciones.add("2. Calendario de Jornadas/Partidos");
+        listaOpciones.add("3. Narrar Partido");
         listaOpciones.add("4. Detalles partido");
         listaOpciones.add("5. Maximos Goleadores");
         listaOpciones.add("6. Rendimiento de un Equipo");
@@ -90,20 +92,53 @@ public class MenuService {
         return mostrarMenu(listaOpciones, "¿Seguro que desea Eliminar?"); // return de la opcion
     }
 
+    public int menuOnceInicial(Jugador j){
+        ArrayList<String> listaOpciones = new ArrayList<>();
+
+        listaOpciones.add("1. empieza el partido");
+        listaOpciones.add("2. banquillo");
+
+        return mostrarMenu(listaOpciones, "¿ " + j.getNombre() + " Participara en el once Inicial?"); // return de la opcion
+    }
+
     public int menuNarrarPartido(Partido partido){
         ArrayList<String> listaOpciones = new ArrayList<>();
 
         listaOpciones.add("1. Añadir gol Local");
-        listaOpciones.add("3. Eliminar gol Local");
-        listaOpciones.add("2. Añador gol visitante");
-        listaOpciones.add("3. Eliminar gol Visitante");
-        listaOpciones.add("3. añadir Evento");
-        listaOpciones.add("3. eliminar Evento");
-        listaOpciones.add("5. volver al Menu principal");
+        listaOpciones.add("2. Eliminar gol Local");
+        listaOpciones.add("3. Añador gol visitante");
+        listaOpciones.add("4. Eliminar gol Visitante");
+        listaOpciones.add("5. añadir Evento");
+        listaOpciones.add("6. volver al Menu de Jornadas");
 
         return mostrarMenu(listaOpciones,
                 "Partido: L-"+Converter.colorToAANSI(partido.getLocal().getPrimario()) + partido.getLocal().getNombre() + Converter.ANSI_RESET+
                         " / V-"+ Converter.colorToAANSI(partido.getVisitante().getSecundario()) + partido.getVisitante().getNombre() + Converter.ANSI_RESET); // return de la opcion
+    }
+
+    public int mostrarTiposEvento(){
+        ArrayList<TipoEvento> tipos = new ArrayList<>(this.tipoEventoService.getAllTipos());
+
+        ArrayList<String> tiposMenu = new ArrayList<>(); // array para las opciones del menu
+        for(TipoEvento t : tipos)
+        {
+            int indice = tipos.indexOf(t) + 1;
+            tiposMenu.add(indice + ". " + t.getNombre());
+        }
+
+        tiposMenu.add(tiposMenu.size()+1 + ". salir del programa");
+
+
+        int opcTipo = mostrarMenu(tiposMenu, "Selecciona el tipo de Evento");
+        int idTipo = 0;
+
+        if (opcTipo < tipos.size() + 1) {
+            idTipo = tipos.get(opcTipo - 1).getId();
+        }else {
+            idTipo = -1;
+        }
+
+        return idTipo;
     }
 
 
@@ -120,8 +155,6 @@ public class MenuService {
         {
             ligasMenu.add(l.getId() + ". " + l.getNombre());
         }
-
-        ligasMenu.add(ligasMenu.size()+1 + ". Crear nueva liga");
         ligasMenu.add(ligasMenu.size()+1 + ". salir del programa");
 
         return mostrarMenu(ligasMenu, "Selecciona la Liga");
@@ -173,36 +206,55 @@ public class MenuService {
         return idJugador;
     }
 
-    public int mostrarJornadasByLigaId(int idLiga)
-    {
+    public int mostrarJornadasByLigaId(int idLiga, String message) {
         ArrayList<Jornada> jornadasLiga = new ArrayList<>(this.ligaService.getJornadasByLigaId(idLiga));
-
         ArrayList<String> jornadasMenu = new ArrayList<>();
-        for(Jornada j : jornadasLiga)
-        {
-            jornadasMenu.add(j.getId() + ". JORNADA - " + j.getFechaInicio());
-        }
-        jornadasMenu.add(jornadasMenu.size()+1 + ". volver atrás");
 
-        return mostrarMenu(jornadasMenu, "Seleccione la Jornada");
+        for (int i = 0; i < jornadasLiga.size(); i++) {
+            Jornada j = jornadasLiga.get(i);
+            int indice = i + 1;
+            jornadasMenu.add(indice + ". JORNADA - " + j.getFechaInicio());
+        }
+
+        jornadasMenu.add((jornadasLiga.size() + 1) + ". Volver atrás");
+
+        int opcJornada = mostrarMenu(jornadasMenu, message);
+        int idJornada = 0;
+
+        if (opcJornada < jornadasLiga.size()+1) {
+            idJornada = jornadasLiga.get(opcJornada - 1).getId();
+        } else {
+            idJornada = -1;
+        }
+
+        return idJornada;
     }
 
-    public int mostrarPartidosByJornadaId(int jornadaId)
-    {
+    public int mostrarPartidosByJornadaId(int jornadaId, String message) {
         ArrayList<Partido> partidosJornada = new ArrayList<>(this.jornadaService.getPartidosByJornadaId(jornadaId));
-
         ArrayList<String> partidosMenu = new ArrayList<>();
-        for(Partido p : partidosJornada)
-        {
-            int indice = partidosJornada.indexOf(p) + 1;
+
+        for (int i = 0; i < partidosJornada.size(); i++) {
+            Partido p = partidosJornada.get(i);
+            int indice = i + 1;
             partidosMenu.add(indice + " - " +
                     Converter.colorToAANSI(p.getLocal().getPrimario()) + p.getLocal().getNombre() + Converter.ANSI_RESET +
                     " VS " +
                     Converter.colorToAANSI(p.getVisitante().getSecundario()) + p.getVisitante().getNombre() + Converter.ANSI_RESET);
         }
-        partidosMenu.add(partidosMenu.size()+1 + ". volver atrás");
 
-        return mostrarMenu(partidosMenu, "Seleccione un partido");
+        partidosMenu.add((partidosJornada.size() + 1) + ". Volver atrás");
+
+        int opcPartido = mostrarMenu(partidosMenu, message);
+        int idPartido = 0;
+
+        if (opcPartido < partidosJornada.size() +1) {
+            idPartido = partidosJornada.get(opcPartido - 1).getId();
+        } else {
+            idPartido = -1;
+        }
+
+        return idPartido;
     }
 
     public int mostrarClasificacion(Liga liga){
@@ -214,6 +266,17 @@ public class MenuService {
         }
 
         return mostrarMenu(equiposClasificacion, "CLASIFICACION");
+    }
+
+    public int getEquiposByPartido(Partido partido){
+
+        List<String> equipos = new ArrayList<>();
+
+        equipos.add("1. " + Converter.colorToAANSI(partido.getLocal().getPrimario()) + partido.getLocal().getNombre() + Converter.ANSI_RESET);
+        equipos.add("2. " + Converter.colorToAANSI(partido.getVisitante().getSecundario()) + partido.getVisitante().getNombre() + Converter.ANSI_RESET);
+        equipos.add("3. Salir");
+
+        return mostrarMenu(equipos, "Selecione el Equipo");
     }
 
 }
